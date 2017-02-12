@@ -1,5 +1,7 @@
 build/
 *.jar
 /dist/
-
+.idea/
+/out/
+Project2.iml
 /nbproject/private/
