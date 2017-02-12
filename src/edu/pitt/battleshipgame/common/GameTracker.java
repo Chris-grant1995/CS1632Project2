@@ -40,6 +40,7 @@ public class GameTracker {
                         System.err.println(e + " I can't sleep!");
                     }
                 }
+                System.out.println("Playing");
                 state = GameState.PLAYING;
                 break;
             }
@@ -57,6 +58,7 @@ public class GameTracker {
             default:
                 break;
         }
+        System.out.println("Done Waiting!");
     }
     
     public List<Board> getBoards() {

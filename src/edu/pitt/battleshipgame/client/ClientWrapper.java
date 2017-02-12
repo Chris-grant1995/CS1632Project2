@@ -37,6 +37,7 @@ public class ClientWrapper implements GameInterface {
     
     @Override
     public void wait(int playerID) {
+
         serverInterface.wait(playerID);
     }
     
