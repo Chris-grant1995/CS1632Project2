@@ -1,15 +1,13 @@
 package edu.pitt.battleshipgame.client;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 import edu.pitt.battleshipgame.common.board.*;
 import edu.pitt.battleshipgame.common.ships.*;
 import edu.pitt.battleshipgame.common.GameInterface;
 import edu.pitt.battleshipgame.common.GameTracker;
+
 import java.net.URL;
-import java.util.Observable;
-import java.util.ResourceBundle;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -32,6 +30,11 @@ public class Client extends Application {
     public static ArrayList<Board> gameBoards;
     public static Scanner scan = new Scanner(System.in);
     public String place = "None";
+    public int length = 0;
+    public boolean startPlacement = true;
+    public String firstPlace = "";
+    public String[][] playerBoard = new String[10][10];
+    //public ArrayList<Pair> playerBoardList = new ArrayList<>();
     @FXML
     private ResourceBundle resources;
 
@@ -71,6 +74,15 @@ public class Client extends Application {
         String text = b.getText();
         place = text.substring(0,1) + ":" + text.substring(1);
         System.out.println(place);
+        while(length == 0){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        updatePlaceBoard(place,length-1);
+        length = 0;
 
     }
     void disableOponentGrid(){
@@ -111,9 +123,12 @@ public class Client extends Application {
     }
     @FXML
     void startGame(ActionEvent event) {
-        System.out.println("Testing");
+
+
+
+        //System.out.println("Testing");
         Button b = (Button)event.getSource();
-        System.out.println("Testing2");
+       // System.out.println("Testing2");
         b.setVisible(false);
         gi = new ClientWrapper();
         myPlayerID = gi.registerPlayer();
@@ -126,45 +141,16 @@ public class Client extends Application {
         Board board = gameBoards.get(myPlayerID);
         enablePlayerGrid();
         //statusLabel.setText("Please enter a start coordinate to place your Battleship");
+        GUIPlaceShips(board);
+        /*
+        gi.setBoards(gameBoards);
+        System.out.println("Done Placing");
+        gameBoards = gi.getBoards();
 
-        Task<Integer> task = new Task<Integer>() {
-            @Override
-            protected Integer call() throws Exception {
-                System.out.println("Tests");
-                for (Ship.ShipType type : Ship.ShipType.values()) {
-                    if (type != Ship.ShipType.NONE) {
-                        updateMessage("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
-                        //System.out.println("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
+        board = gameBoards.get(myPlayerID);
 
-                        while(place.equals("None")){
-                            System.out.println(place);
-                            Thread.sleep(1000);
-                        }
-                        Coordinate start = new Coordinate(place);
-                        place = "None";
-
-                        updateMessage("Please enter a end coordinate to place your " + ShipFactory.getNameFromType(type));
-                        System.out.println("Please enter a end coordinate to place your " + ShipFactory.getNameFromType(type));
-                        while(place.equals("None")){
-                            System.out.println(place);
-                            Thread.sleep(1000);
-                        }
-                        System.out.println("Done");
-                        Coordinate end = new Coordinate(place);
-                        place = "None";
-                        ShipFactory.newShipFromType(type, start, end,board);
-
-
-                    }
-                }
-                return 0;
-            }
-        };
-
-        statusLabel.textProperty().bind(task.messageProperty());
-        Thread th = new Thread(task);
-        th.setDaemon(true);
-        th.start();
+        updatePlayerBoard(board);
+        */
 
     }
 
@@ -180,7 +166,6 @@ public class Client extends Application {
 
     }
     public static void main(String [] args) {
-
         launch(args);
         System.out.println("Test");
         /*
@@ -214,6 +199,211 @@ public class Client extends Application {
                 ShipFactory.newShipFromType(type, start, end, board);
             }
         }
+    }
+    public void updatePlayerBoard(Board board){
+        List<Ship> ships = board.getShipList();
+
+        for(Ship ship:ships){
+            List<Coordinate> coords = ship.getCoordinates();
+            System.out.println(ship.getName());
+            for (Coordinate coord:coords){
+                System.out.println(coord);
+            }
+        }
+    }
+    public void GUIPlaceShips(Board board){
+        Task<Integer> task = new Task<Integer>() {
+            @Override
+            protected Integer call() throws Exception {
+                System.out.println("Tests");
+                for (Ship.ShipType type : Ship.ShipType.values()) {
+                    if (type != Ship.ShipType.NONE) {
+                        updateMessage("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
+                        //System.out.println("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
+
+                        while(place.equals("None")){
+                            //System.out.println(place);
+                            Thread.sleep(1000);
+                        }
+                        Coordinate start = new Coordinate(place);
+                        length = ShipFactory.getLengthFromType(type);
+                        System.out.println("Length " +length );
+                        //System.out.println(length);
+                        //updatePlaceBoard(place, length-1);
+                        while(length!=0){
+                            Thread.sleep(1000);
+                        }
+                        place = "None";
+                        startPlacement = false;
+
+                        updateMessage("Please enter a end coordinate to place your " + ShipFactory.getNameFromType(type));
+                        //System.out.println("Please enter a end coordinate to place your " + ShipFactory.getNameFromType(type));
+                        while(place.equals("None")){
+                            //System.out.println(place);
+                            Thread.sleep(1000);
+                        }
+                        length = ShipFactory.getLengthFromType(type);
+                        while(length!=0){
+                            Thread.sleep(1000);
+                        }
+                        updateMessage("Done "+ ShipFactory.getNameFromType(type) );
+                        Thread.sleep(5000);
+                        Coordinate end = new Coordinate(place);
+                        place = "None";
+                        ShipFactory.newShipFromType(type, start, end,board);
+
+
+                    }
+                }
+                System.out.println("Done");
+                disablePlayerGrid();
+                return 0;
+            }
+        };
+
+        statusLabel.textProperty().bind(task.messageProperty());
+        Thread th = new Thread(task);
+        th.setDaemon(true);
+        th.start();
+    }
+    public void updatePlaceBoard(String p, int length){
+        if(startPlacement){
+            ArrayList<String> options = new ArrayList<>();
+            //int x = 0;
+            char letter = p.charAt(0);
+            int num = Integer.parseInt(p.substring(2,3));
+            firstPlace = letter + "" + num;
+            /*switch (letter){
+                case 'A':
+                    x = 0;
+                    break;
+                case 'B':
+                    x=1;
+                    break;
+                case 'C':
+                    x = 2;
+                    break;
+                case 'D':
+                    x=3;
+                    break;
+                case 'E':
+                    x = 4;
+                    break;
+                case 'F':
+                    x=5;
+                    break;
+                case 'G':
+                    x = 6;
+                    break;
+                case 'H':
+                    x=7;
+                    break;
+                case 'I':
+                    x = 8;
+                    break;
+                case 'J':
+                    x=9;
+                    break;
+            }
+
+            int y = num -1;
+
+            playerBoard[y][x] = "b";
+            */
+            char newL = (char) (letter-length);
+            String newS = newL + "" + num;
+            options.add(newS);
+
+            newL = (char) (letter+length);
+            newS = newL + "" + num;
+            options.add(newS);
+
+            int newN = num - length;
+            newS = letter + "" + newN;
+            options.add(newS);
+
+            newN = num + length;
+            newS = letter + "" + newN;
+            options.add(newS);
+
+            ObservableList<Node> test = playerGrid.getChildren();
+            int counter = 0;
+            for(Node t:test){
+
+                Button b = (Button)t;
+
+                if(!options.contains(b.getText()) || b.getText().equals("B")){
+                    b.setDisable(true);
+                }
+
+                counter++;
+                if (counter == 100)
+                    break;
+            }
+            startPlacement = false;
+
+        }
+        else{
+            ArrayList<String> greyedOut = new ArrayList<>();
+            //int x = 0;
+            char letter2 = p.charAt(0);
+            int num2 = Integer.parseInt(p.substring(2,3));
+            char letter1 = firstPlace.charAt(0);
+            int num1 = Integer.parseInt(firstPlace.substring(1,2));
+
+            String newS = letter1 + "" + num1;
+            greyedOut.add(newS);
+            newS = letter2 + "" + num2;
+            greyedOut.add(newS);
+
+            if(letter1 == letter2){
+                System.out.println("Same Letters");
+                for(int i = num1; i<num2; i++){
+                    newS = letter1 + "" + i;
+                    greyedOut.add(newS);
+                }
+                for(int i = num2; i<num1; i++){
+                    newS = letter1 + "" + i;
+                    greyedOut.add(newS);
+                }
+            }
+            if(num1 == num2){
+                System.out.println("Same Numbers");
+                for(char c = letter1; c<letter2; c++){
+                    newS = c+ "" + num1;
+                    greyedOut.add(newS);
+                }
+                for(char c = letter2; c<letter1; c++){
+                    newS = c+ "" + num1;
+                    greyedOut.add(newS);
+                }
+            }
+
+
+            ObservableList<Node> test = playerGrid.getChildren();
+            int counter = 0;
+            for(Node t:test){
+
+                Button b = (Button)t;
+
+                if(greyedOut.contains(b.getText()) || b.getText().equals("B")){
+                    b.setText("B");
+                    b.setDisable(true);
+
+                }
+                else{
+                    b.setDisable(false);
+                }
+
+                counter++;
+                if (counter == 100)
+                    break;
+
+            }
+            startPlacement = true;
+
+        }
+
     }
     public static void gameLoop() {
         System.out.println("The game is starting!");
