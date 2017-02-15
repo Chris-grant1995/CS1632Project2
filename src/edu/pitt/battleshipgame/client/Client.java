@@ -35,6 +35,8 @@ public class Client extends Application {
     public boolean startPlacement = true;
     public String firstPlace = "";
     public ArrayList<String> placedCoords = new ArrayList<>();
+    public String abbreviation = "";
+    public ArrayList<String> shipAbbr = new ArrayList<>();
     //public String[][] playerBoard = new String[10][10];
     //public ArrayList<Pair> playerBoardList = new ArrayList<>();
     @FXML
@@ -64,6 +66,8 @@ public class Client extends Application {
     }
     @FXML
     void fire(ActionEvent event) {
+        //Method that gets called when top button gets pressed
+
         Button b = (Button)event.getSource();
         System.out.println(b.getText());
         //b.setVisible(false);
@@ -72,6 +76,7 @@ public class Client extends Application {
     }
     @FXML
     void place(ActionEvent event) throws InterruptedException {
+        //Method that gets called when a bottom button gets pressed
         Button b = (Button)event.getSource();
         String text = b.getText();
         place = text.substring(0, 1) + ":" + text.substring(1,text.length());
@@ -82,7 +87,7 @@ public class Client extends Application {
 
         }
         System.out.println(place);
-        updatePlaceBoard(place,length-1);
+        updatePlaceBoard(place,length-1, abbreviation);
         length = 0;
 
     }
@@ -227,6 +232,7 @@ public class Client extends Application {
                             Thread.sleep(1000);
                         }
                         Coordinate start = new Coordinate(place);
+                        abbreviation = ShipFactory.getAbbreviationFromType(type);
                         length = ShipFactory.getLengthFromType(type);
                         System.out.println("Length " +length );
                         //System.out.println(length);
@@ -243,6 +249,7 @@ public class Client extends Application {
                             //System.out.println(place);
                             Thread.sleep(1000);
                         }
+                        abbreviation = ShipFactory.getAbbreviationFromType(type);
                         length = ShipFactory.getLengthFromType(type);
                         while(length!=0){
                             Thread.sleep(1000);
@@ -265,7 +272,8 @@ public class Client extends Application {
         th.setDaemon(true);
         th.start();
     }
-    public void updatePlaceBoard(String p, int length){
+    public void updatePlaceBoard(String p, int length, String abbr){
+        shipAbbr.add(abbr);
         if(startPlacement){
             ArrayList<String> options = new ArrayList<>();
             //int x = 0;
@@ -397,7 +405,7 @@ public class Client extends Application {
 
                 Button b = (Button)t;
 
-                if(!options.contains(b.getText()) || b.getText().equals("B")){
+                if(!options.contains(b.getText()) || shipAbbr.contains(b.getText())){
                     b.setDisable(true);
                 }
 
@@ -423,7 +431,7 @@ public class Client extends Application {
             }
             char letter1 = firstPlace.charAt(0);
             int num1;
-            if(p.contains("10")){
+            if(firstPlace.contains("10")){
                 num1 = Integer.parseInt(firstPlace.substring(1,3));
             }
             else{
@@ -470,9 +478,12 @@ public class Client extends Application {
 
                 Button b = (Button)t;
 
-                if(greyedOut.contains(b.getText()) || b.getText().equals("B")){
+                if(greyedOut.contains(b.getText()) || shipAbbr.contains(b.getText())){
                     placedCoords.add(b.getText());
-                    b.setText("B");
+                    if(greyedOut.contains(b.getText())){
+                        b.setText(abbr);
+                    }
+
                     b.setDisable(true);
 
 
