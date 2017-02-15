@@ -79,19 +79,24 @@ public class Client extends Application {
         //Method that gets called when a bottom button gets pressed
         Button b = (Button)event.getSource();
         String text = b.getText();
+
+        //Add the : that the coordinate requires
         place = text.substring(0, 1) + ":" + text.substring(1,text.length());
-        System.out.println(place);
-        //Thread.sleep(5000);
+
+        //Wait for the other thread to calculate the length of the ship we are creating
         while(length == 0){
             Thread.sleep(1000);
 
         }
-        System.out.println(place);
+
+        //Update the board according to the button press
         updatePlaceBoard(place,length-1, abbreviation);
         length = 0;
 
     }
     void disableOponentGrid(){
+        //Disables all buttons on the top grid
+
         ObservableList<Node> test = oponentGrid.getChildren();
         int counter = 0;
         for(Node t:test){
@@ -104,6 +109,7 @@ public class Client extends Application {
         }
     }
     void enablePlayerGrid(){
+        //Enables all the buttons on the player's (bottom) grid
         ObservableList<Node> test = playerGrid.getChildren();
         int counter = 0;
         for(Node t:test){
@@ -116,6 +122,7 @@ public class Client extends Application {
         }
     }
     void disablePlayerGrid(){
+        //Disables all the buttons on the player's (bottom) grid)
         ObservableList<Node> test = playerGrid.getChildren();
         int counter = 0;
         for(Node t:test){
@@ -173,7 +180,6 @@ public class Client extends Application {
     }
     public static void main(String [] args) {
         launch(args);
-        System.out.println("Test");
         /*
         gi = new ClientWrapper();
         myPlayerID = gi.registerPlayer();
@@ -191,52 +197,26 @@ public class Client extends Application {
         */
     }
 
-    public static void placeShips(Board board) {
-        System.out.println("Your Board:");
-        System.out.println(board.toString(true));
-        for(Ship.ShipType type : Ship.ShipType.values()) {
-            if(type != Ship.ShipType.NONE) {
-                System.out.println("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
-                Coordinate start = new Coordinate(scan.nextLine());
-                System.out.println("Please enter an end coordinate to place your " + ShipFactory.getNameFromType(type));
-                Coordinate end = new Coordinate(scan.nextLine());
-                // We don't need to track a reference to the ship since it will be
-                // on the board.
-                ShipFactory.newShipFromType(type, start, end, board);
-            }
-        }
-    }
-    public void updatePlayerBoard(Board board){
-        List<Ship> ships = board.getShipList();
-
-        for(Ship ship:ships){
-            List<Coordinate> coords = ship.getCoordinates();
-            System.out.println(ship.getName());
-            for (Coordinate coord:coords){
-                System.out.println(coord);
-            }
-        }
-    }
     public void GUIPlaceShips(Board board){
+
+        //This is the method that is run when we create a new thread below.
         Task<Integer> task = new Task<Integer>() {
             @Override
             protected Integer call() throws Exception {
-                System.out.println("Tests");
                 for (Ship.ShipType type : Ship.ShipType.values()) {
                     if (type != Ship.ShipType.NONE) {
                         updateMessage("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
-                        //System.out.println("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
 
+                        //Wait until the user had pressed a button
                         while(place.equals("None")){
-                            System.out.println(place);
                             Thread.sleep(1000);
                         }
                         Coordinate start = new Coordinate(place);
+                        //Gets abbreviation and length of the ship that we are placing.
                         abbreviation = ShipFactory.getAbbreviationFromType(type);
                         length = ShipFactory.getLengthFromType(type);
-                        System.out.println("Length " +length );
-                        //System.out.println(length);
-                        //updatePlaceBoard(place, length-1);
+
+                        //Wait until all buttons that cannot be legitimately pressed are disabled
                         while(length!=0){
                             Thread.sleep(1000);
                         }
@@ -244,13 +224,18 @@ public class Client extends Application {
                         startPlacement = false;
 
                         updateMessage("Please enter a end coordinate to place your " + ShipFactory.getNameFromType(type));
-                        //System.out.println("Please enter a end coordinate to place your " + ShipFactory.getNameFromType(type));
+
+                        //Wait until the user had pressed a button
                         while(place.equals("None")){
                             //System.out.println(place);
                             Thread.sleep(1000);
                         }
+
+                        //Gets abbreviation and length of the ship that we are placing.
                         abbreviation = ShipFactory.getAbbreviationFromType(type);
                         length = ShipFactory.getLengthFromType(type);
+
+                        //Wait until all buttons that cannot be legitimately pressed are disabled
                         while(length!=0){
                             Thread.sleep(1000);
                         }
@@ -261,69 +246,37 @@ public class Client extends Application {
 
                     }
                 }
-                System.out.println("Done");
+                //Now that we are done placing ships, disable all buttons on the player's grid
+                updateMessage("Done Placing Ships");
                 disablePlayerGrid();
                 return 0;
             }
         };
-
+        //Create the new thread and start it.
         statusLabel.textProperty().bind(task.messageProperty());
         Thread th = new Thread(task);
         th.setDaemon(true);
         th.start();
     }
     public void updatePlaceBoard(String p, int length, String abbr){
+        //Method that disables buttons that need to be disabled, and updates button labels
+
+        //Add ship abbreviation to list
         shipAbbr.add(abbr);
+
+        //If we are placing the "head" of the ship
         if(startPlacement){
             ArrayList<String> options = new ArrayList<>();
             //int x = 0;
+
+            //Seperate number and letter from string.
             char letter = p.charAt(0);
             int num;
-            if(p.contains("10")){
-                num = Integer.parseInt(p.substring(2,4));
-            }
-            else{
-                num = Integer.parseInt(p.substring(2,3));
-            }
-
+            num = Integer.parseInt(p.substring(2,p.length()));
+            //Save this location for when we place the "tail" of the ship
             firstPlace = letter + "" + num;
-            /*switch (letter){
-                case 'A':
-                    x = 0;
-                    break;
-                case 'B':
-                    x=1;
-                    break;
-                case 'C':
-                    x = 2;
-                    break;
-                case 'D':
-                    x=3;
-                    break;
-                case 'E':
-                    x = 4;
-                    break;
-                case 'F':
-                    x=5;
-                    break;
-                case 'G':
-                    x = 6;
-                    break;
-                case 'H':
-                    x=7;
-                    break;
-                case 'I':
-                    x = 8;
-                    break;
-                case 'J':
-                    x=9;
-                    break;
-            }
 
-            int y = num -1;
-
-            playerBoard[y][x] = "b";
-            */
+            //Add all possible tail values, depending on the length of the ship
             char newL = (char) (letter-length);
             String newS = newL + "" + num;
             options.add(newS);
@@ -340,18 +293,15 @@ public class Client extends Application {
             newS = letter + "" + newN;
             options.add(newS);
 
-            ObservableList<Node> test = playerGrid.getChildren();
-            System.out.println(firstPlace);
-            int counter = 0;
-            System.out.println(options);
 
 
+            //Create a copy of options because we will be destorying options2
             ArrayList<String> options2 = new ArrayList<>();
             for(String option: options){
                 options2.add(option);
             }
 
-
+            //Checks to make sure intersections are not allowed.
             for(String option:options2){
                 char letter1 = firstPlace.charAt(0);
                 int num1 = Integer.parseInt(firstPlace.substring(1,firstPlace.length()));
@@ -359,6 +309,7 @@ public class Client extends Application {
                 char letter2 = option.charAt(0);
                 int num2 = Integer.parseInt(option.substring(1,option.length()));
 
+                //Lists all buttons that would be disabled if the user were to select that specific option
                 ArrayList<String> path = new ArrayList<>();
                 if(letter1 == letter2){
                     System.out.println("Same Letters");
@@ -381,11 +332,11 @@ public class Client extends Application {
                         path.add(newS);
                     }
                 }
-                System.out.println(path);
+
+                //Searches for the buttons in path, and if it finds that the button isn't occupied, it removes it.
                 ObservableList<Node> buttons = playerGrid.getChildren();
                 int counter2=0;
                 for(Node b: buttons){
-                    System.out.println(counter2);
                     Button button = (Button)b;
                     if(path.contains(button.getText())){
                         path.remove(button.getText());
@@ -394,13 +345,17 @@ public class Client extends Application {
                     if (counter2 == 100)
                         break;
                 }
-                System.out.println(path);
+                //When the above for loop finishes, path will contain the coordinates of any occupied button,
+                // so if path isn't empty, the path would intersect with another ship, so we remove that option
                 if(path.size() != 0){
                     options.remove(option);
                 }
 
 
             }
+            //Disable any button that isn't contained in the good options list.
+            ObservableList<Node> test = playerGrid.getChildren();
+            int counter = 0;
             for(Node t:test){
 
                 Button b = (Button)t;
@@ -415,52 +370,42 @@ public class Client extends Application {
                 if (counter == 100)
                     break;
             }
+            //Tells the method that we have placed the "head" of our ship
             startPlacement = false;
 
         }
+        //we've placed the head, so now we are placing the tail
         else{
             ArrayList<String> greyedOut = new ArrayList<>();
             //int x = 0;
+
+            //Break up strings letter and number
             char letter2 = p.charAt(0);
             int num2;
-            if(p.contains("10")){
-                num2 = Integer.parseInt(p.substring(2,4));
-            }
-            else{
-                num2 = Integer.parseInt(p.substring(2,3));
-            }
+            num2 = Integer.parseInt(p.substring(2,p.length()));
+
+            //Break up the firstPlace letter and number
             char letter1 = firstPlace.charAt(0);
             int num1;
-            if(firstPlace.contains("10")){
-                num1 = Integer.parseInt(firstPlace.substring(1,3));
-            }
-            else{
-                num1 = Integer.parseInt(firstPlace.substring(1,2));
-            }
+            num1 = Integer.parseInt(firstPlace.substring(1,p.length()));
 
             String newS = letter1 + "" + num1;
             greyedOut.add(newS);
             newS = letter2 + "" + num2;
             greyedOut.add(newS);
 
-            System.out.println("Num1" + num1);
-            System.out.println("Num2" + num2);
-
+            //Add all the buttons between button1 and button2 to be greyed out
             if(letter1 == letter2){
-                System.out.println("Same Letters");
                 for(int i = num1; i<num2; i++){
                     newS = letter1 + "" + i;
                     greyedOut.add(newS);
-                    System.out.println("1:" + newS);
                 }
                 for(int i = num2; i<num1; i++){
                     newS = letter1 + "" + i;
                     greyedOut.add(newS);
-                    System.out.println("2:" + newS);
                 }
             }
             if(num1 == num2){
-                System.out.println("Same Numbers");
                 for(char c = letter1; c<letter2; c++){
                     newS = c+ "" + num1;
                     greyedOut.add(newS);
@@ -471,7 +416,7 @@ public class Client extends Application {
                 }
             }
 
-
+            //Disable buttons for the path, sets abbreviations, enables buttons that should be enabled afterwards
             ObservableList<Node> test = playerGrid.getChildren();
             int counter = 0;
             for(Node t:test){
@@ -497,6 +442,7 @@ public class Client extends Application {
                     break;
 
             }
+            //Says we are ready for the next head ship
             startPlacement = true;
 
         }
