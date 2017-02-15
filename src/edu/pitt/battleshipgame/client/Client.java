@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
+
 public class Client extends Application {
     public static GameInterface gi;
     public static int myPlayerID;
@@ -33,7 +34,8 @@ public class Client extends Application {
     public int length = 0;
     public boolean startPlacement = true;
     public String firstPlace = "";
-    public String[][] playerBoard = new String[10][10];
+    public ArrayList<String> placedCoords = new ArrayList<>();
+    //public String[][] playerBoard = new String[10][10];
     //public ArrayList<Pair> playerBoardList = new ArrayList<>();
     @FXML
     private ResourceBundle resources;
@@ -333,6 +335,64 @@ public class Client extends Application {
             ObservableList<Node> test = playerGrid.getChildren();
             System.out.println(firstPlace);
             int counter = 0;
+            System.out.println(options);
+
+
+            ArrayList<String> options2 = new ArrayList<>();
+            for(String option: options){
+                options2.add(option);
+            }
+
+
+            for(String option:options2){
+                char letter1 = firstPlace.charAt(0);
+                int num1 = Integer.parseInt(firstPlace.substring(1,firstPlace.length()));
+
+                char letter2 = option.charAt(0);
+                int num2 = Integer.parseInt(option.substring(1,option.length()));
+
+                ArrayList<String> path = new ArrayList<>();
+                if(letter1 == letter2){
+                    System.out.println("Same Letters");
+                    for(int i = num1; i<num2; i++){
+                        newS = letter1 + "" + i;
+                        path.add(newS);
+                    }
+                    for(int i = num2; i<num1; i++){
+                        newS = letter1 + "" + i;
+                        path.add(newS);
+                    }
+                }
+                if(num1 == num2){
+                    for(char c = letter1; c<letter2; c++){
+                        newS = c+ "" + num1;
+                        path.add(newS);
+                    }
+                    for(char c = letter2; c<letter1; c++){
+                        newS = c+ "" + num1;
+                        path.add(newS);
+                    }
+                }
+                System.out.println(path);
+                ObservableList<Node> buttons = playerGrid.getChildren();
+                int counter2=0;
+                for(Node b: buttons){
+                    System.out.println(counter2);
+                    Button button = (Button)b;
+                    if(path.contains(button.getText())){
+                        path.remove(button.getText());
+                    }
+                    counter2++;
+                    if (counter2 == 100)
+                        break;
+                }
+                System.out.println(path);
+                if(path.size() != 0){
+                    options.remove(option);
+                }
+
+
+            }
             for(Node t:test){
 
                 Button b = (Button)t;
@@ -340,6 +400,8 @@ public class Client extends Application {
                 if(!options.contains(b.getText()) || b.getText().equals("B")){
                     b.setDisable(true);
                 }
+
+
 
                 counter++;
                 if (counter == 100)
@@ -409,8 +471,10 @@ public class Client extends Application {
                 Button b = (Button)t;
 
                 if(greyedOut.contains(b.getText()) || b.getText().equals("B")){
+                    placedCoords.add(b.getText());
                     b.setText("B");
                     b.setDisable(true);
+
 
                 }
                 else{
