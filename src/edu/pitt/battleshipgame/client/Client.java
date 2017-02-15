@@ -69,18 +69,17 @@ public class Client extends Application {
         b.setDisable(true);
     }
     @FXML
-    void place(ActionEvent event) {
+    void place(ActionEvent event) throws InterruptedException {
         Button b = (Button)event.getSource();
         String text = b.getText();
-        place = text.substring(0,1) + ":" + text.substring(1);
+        place = text.substring(0, 1) + ":" + text.substring(1,text.length());
         System.out.println(place);
+        //Thread.sleep(5000);
         while(length == 0){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Thread.sleep(1000);
+
         }
+        System.out.println(place);
         updatePlaceBoard(place,length-1);
         length = 0;
 
@@ -222,7 +221,7 @@ public class Client extends Application {
                         //System.out.println("Please enter a start coordinate to place your " + ShipFactory.getNameFromType(type));
 
                         while(place.equals("None")){
-                            //System.out.println(place);
+                            System.out.println(place);
                             Thread.sleep(1000);
                         }
                         Coordinate start = new Coordinate(place);
@@ -246,8 +245,6 @@ public class Client extends Application {
                         while(length!=0){
                             Thread.sleep(1000);
                         }
-                        updateMessage("Done "+ ShipFactory.getNameFromType(type) );
-                        Thread.sleep(5000);
                         Coordinate end = new Coordinate(place);
                         place = "None";
                         ShipFactory.newShipFromType(type, start, end,board);
@@ -271,7 +268,14 @@ public class Client extends Application {
             ArrayList<String> options = new ArrayList<>();
             //int x = 0;
             char letter = p.charAt(0);
-            int num = Integer.parseInt(p.substring(2,3));
+            int num;
+            if(p.contains("10")){
+                num = Integer.parseInt(p.substring(2,4));
+            }
+            else{
+                num = Integer.parseInt(p.substring(2,3));
+            }
+
             firstPlace = letter + "" + num;
             /*switch (letter){
                 case 'A':
@@ -327,6 +331,7 @@ public class Client extends Application {
             options.add(newS);
 
             ObservableList<Node> test = playerGrid.getChildren();
+            System.out.println(firstPlace);
             int counter = 0;
             for(Node t:test){
 
@@ -347,24 +352,41 @@ public class Client extends Application {
             ArrayList<String> greyedOut = new ArrayList<>();
             //int x = 0;
             char letter2 = p.charAt(0);
-            int num2 = Integer.parseInt(p.substring(2,3));
+            int num2;
+            if(p.contains("10")){
+                num2 = Integer.parseInt(p.substring(2,4));
+            }
+            else{
+                num2 = Integer.parseInt(p.substring(2,3));
+            }
             char letter1 = firstPlace.charAt(0);
-            int num1 = Integer.parseInt(firstPlace.substring(1,2));
+            int num1;
+            if(p.contains("10")){
+                num1 = Integer.parseInt(firstPlace.substring(1,3));
+            }
+            else{
+                num1 = Integer.parseInt(firstPlace.substring(1,2));
+            }
 
             String newS = letter1 + "" + num1;
             greyedOut.add(newS);
             newS = letter2 + "" + num2;
             greyedOut.add(newS);
 
+            System.out.println("Num1" + num1);
+            System.out.println("Num2" + num2);
+
             if(letter1 == letter2){
                 System.out.println("Same Letters");
                 for(int i = num1; i<num2; i++){
                     newS = letter1 + "" + i;
                     greyedOut.add(newS);
+                    System.out.println("1:" + newS);
                 }
                 for(int i = num2; i<num1; i++){
                     newS = letter1 + "" + i;
                     greyedOut.add(newS);
+                    System.out.println("2:" + newS);
                 }
             }
             if(num1 == num2){
