@@ -9,6 +9,7 @@ import edu.pitt.battleshipgame.common.GameTracker;
 
 import java.net.URL;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,8 +38,6 @@ public class Client extends Application {
     public ArrayList<String> placedCoords = new ArrayList<>();
     public String abbreviation = "";
     public ArrayList<String> shipAbbr = new ArrayList<>();
-    //public String[][] playerBoard = new String[10][10];
-    //public ArrayList<Pair> playerBoardList = new ArrayList<>();
     @FXML
     private ResourceBundle resources;
 
@@ -108,6 +107,21 @@ public class Client extends Application {
                 break;
         }
     }
+
+    void enableOponentGrid(){
+        //Disables all buttons on the top grid
+
+        ObservableList<Node> test = oponentGrid.getChildren();
+        int counter = 0;
+        for(Node t:test){
+
+            Button b = (Button)t;
+            b.setDisable(false);
+            counter++;
+            if (counter == 100)
+                break;
+        }
+    }
     void enablePlayerGrid(){
         //Enables all the buttons on the player's (bottom) grid
         ObservableList<Node> test = playerGrid.getChildren();
@@ -135,7 +149,7 @@ public class Client extends Application {
         }
     }
     @FXML
-    void startGame(ActionEvent event) {
+    void startGame(ActionEvent event) throws InterruptedException {
 
 
 
@@ -155,16 +169,22 @@ public class Client extends Application {
         enablePlayerGrid();
         //statusLabel.setText("Please enter a start coordinate to place your Battleship");
         GUIPlaceShips(board);
+
+        //Thread.currentThread().wait();
         /*
+        while(!statusLabel.getText().equals("Done Placing Ships")){
+            System.out.println("Testing");
+            Thread.sleep(100);
+        }
+
+
         gi.setBoards(gameBoards);
         System.out.println("Done Placing");
         gameBoards = gi.getBoards();
 
-        board = gameBoards.get(myPlayerID);
+        GUIGameLoop();
 
-        updatePlayerBoard(board);
         */
-
     }
 
 
@@ -249,6 +269,23 @@ public class Client extends Application {
                 //Now that we are done placing ships, disable all buttons on the player's grid
                 updateMessage("Done Placing Ships");
                 disablePlayerGrid();
+
+                gi.setBoards(gameBoards);
+                //GUIGameLoop();
+
+                updateMessage("Waiting for your turn");
+
+                gi.wait(myPlayerID);
+                System.out.println("Your Turn!");
+                updateMessage("Its your turn!");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        //statusLabel.setText("Its your turn!");
+                        enableOponentGrid();
+                    }
+                });
+
                 return 0;
             }
         };
@@ -387,7 +424,7 @@ public class Client extends Application {
             //Break up the firstPlace letter and number
             char letter1 = firstPlace.charAt(0);
             int num1;
-            num1 = Integer.parseInt(firstPlace.substring(1,p.length()));
+            num1 = Integer.parseInt(firstPlace.substring(1,p.length()-1));
 
             String newS = letter1 + "" + num1;
             greyedOut.add(newS);
@@ -446,6 +483,39 @@ public class Client extends Application {
             startPlacement = true;
 
         }
+
+    }
+    public void GUIGameLoop(){
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusLabel.setText("Waiting for your turn");
+                    }
+                });
+                gi.wait(myPlayerID);
+                System.out.println("Your Turn!");
+                updateMessage("Its your turn!");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusLabel.setText("Its your turn!");
+                        enableOponentGrid();
+                    }
+                });
+
+                return null;
+            }
+        };
+
+        //statusLabel.textProperty().bind(task.messageProperty());
+
+        Thread th = new Thread(task);
+        th.setDaemon(true);
+        th.start();
+
 
     }
     public static void gameLoop() {
