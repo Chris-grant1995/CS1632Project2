@@ -45,7 +45,11 @@ public class ClientWrapper implements GameInterface {
     public void setBoards(ArrayList<Board> boards) {
         serverInterface.setBoards(Serializer.toByteArray(boards));
     }
-    
+
+    @Override
+    public void setBoard(Board board, int myPlayerID) {
+        serverInterface.setBoard(Serializer.toByteArray(board), myPlayerID);
+    }
     /**
      * Client side wrapper around the 
      * @return 

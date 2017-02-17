@@ -9,4 +9,5 @@ public interface GameInterface {
     ArrayList<Board> getBoards();
     void setBoards(ArrayList<Board> boards);
     boolean isGameOver();
+    void setBoard(Board board, int playerID);
 }

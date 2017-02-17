@@ -38,6 +38,7 @@ public class Client extends Application {
     public ArrayList<String> placedCoords = new ArrayList<>();
     public String abbreviation = "";
     public ArrayList<String> shipAbbr = new ArrayList<>();
+    public String shot = "None";
     @FXML
     private ResourceBundle resources;
 
@@ -68,9 +69,12 @@ public class Client extends Application {
         //Method that gets called when top button gets pressed
 
         Button b = (Button)event.getSource();
-        System.out.println(b.getText());
+        //System.out.println(b.getText());
         //b.setVisible(false);
-        b.setText("HIT");
+        //b.setText("HIT");
+        String text = b.getText();
+        shot= text.substring(0, 1) + ":" + text.substring(1,text.length());
+
         b.setDisable(true);
     }
     @FXML
@@ -238,6 +242,7 @@ public class Client extends Application {
 
                         //Wait until all buttons that cannot be legitimately pressed are disabled
                         while(length!=0){
+                            System.out.println("Wait until all buttons that cannot be legitimately pressed are disabled");
                             Thread.sleep(1000);
                         }
                         place = "None";
@@ -245,9 +250,9 @@ public class Client extends Application {
 
                         updateMessage("Please enter a end coordinate to place your " + ShipFactory.getNameFromType(type));
 
-                        //Wait until the user had pressed a button
+                        //Wait until the user had pressed a button 
                         while(place.equals("None")){
-                            //System.out.println(place);
+                            System.out.println("Wait until the user had pressed a button end");
                             Thread.sleep(1000);
                         }
 
@@ -255,8 +260,9 @@ public class Client extends Application {
                         abbreviation = ShipFactory.getAbbreviationFromType(type);
                         length = ShipFactory.getLengthFromType(type);
 
-                        //Wait until all buttons that cannot be legitimately pressed are disabled
+                        //Wait until all buttons that can be legitimately pressed are enabled
                         while(length!=0){
+                            System.out.println("Wait until all buttons that can be legitimately pressed are enabled");
                             Thread.sleep(1000);
                         }
                         Coordinate end = new Coordinate(place);
@@ -269,22 +275,75 @@ public class Client extends Application {
                 //Now that we are done placing ships, disable all buttons on the player's grid
                 updateMessage("Done Placing Ships");
                 disablePlayerGrid();
-
-                gi.setBoards(gameBoards);
-                //GUIGameLoop();
-
-                updateMessage("Waiting for your turn");
-
+                printBoardInfo(board);
+                
+                //gi.setBoards(gameBoards);
+                gi.setBoard(board, myPlayerID);
+                updateMessage("Waiting for your opponent to finish placing");
                 gi.wait(myPlayerID);
-                System.out.println("Your Turn!");
-                updateMessage("Its your turn!");
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        //statusLabel.setText("Its your turn!");
-                        enableOponentGrid();
+                
+                //GUIGameLoop();
+                do{
+
+                    updateMessage("Waiting for your turn");
+
+                    gi.wait(myPlayerID);
+                    System.out.println("Your Turn!");
+                    
+                    updateMessage("Its your turn!");
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            //statusLabel.setText("Its your turn!");
+                            enableOponentGrid();
+                        }
+                    });
+                    while(shot.equals("None")){
+                        Thread.sleep(1000);
                     }
-                });
+
+                    gameBoards = gi.getBoards();
+                    System.out.println(gameBoards.get((myPlayerID )).toString(true));
+                    System.out.println(shot);
+                    Coordinate move = new Coordinate(shot);
+                    Ship ship = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).makeMove(move);
+                    if(ship == null) {
+                        updateMessage("Miss");
+                        Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            //statusLabel.setText("Its your turn!");
+                            updateShotBoard(shot, "Miss");
+                        }
+                    });
+                    } 
+                    else if (ship.isSunk()) {
+                        updateMessage("You sunk "+ ship.getName());
+                        Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            //statusLabel.setText("Its your turn!");
+                            updateShotBoard(shot, "Hit");
+                        }
+                        });
+                    } 
+                    else {
+                            updateMessage("Hit");
+                            Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                            //statusLabel.setText("Its your turn!");
+                                updateShotBoard(shot, "Hit");
+                            }
+                            });
+                        }
+                    gi.setBoards(gameBoards);
+                    shot = "None";
+                    System.out.println("Loop Done");
+
+                    } while(!gi.isGameOver());
+                    updateMessage("Game Finished");
+
 
                 return 0;
             }
@@ -300,7 +359,7 @@ public class Client extends Application {
 
         //Add ship abbreviation to list
         shipAbbr.add(abbr);
-
+        System.out.println(startPlacement);
         //If we are placing the "head" of the ship
         if(startPlacement){
             ArrayList<String> options = new ArrayList<>();
@@ -369,7 +428,7 @@ public class Client extends Application {
                         path.add(newS);
                     }
                 }
-
+                System.out.println("Removing Intersections");
                 //Searches for the buttons in path, and if it finds that the button isn't occupied, it removes it.
                 ObservableList<Node> buttons = playerGrid.getChildren();
                 int counter2=0;
@@ -384,12 +443,14 @@ public class Client extends Application {
                 }
                 //When the above for loop finishes, path will contain the coordinates of any occupied button,
                 // so if path isn't empty, the path would intersect with another ship, so we remove that option
+                System.out.println("Checking Intersections");
                 if(path.size() != 0){
                     options.remove(option);
                 }
 
 
             }
+            System.out.println("Disabling Buttons");
             //Disable any button that isn't contained in the good options list.
             ObservableList<Node> test = playerGrid.getChildren();
             int counter = 0;
@@ -424,13 +485,13 @@ public class Client extends Application {
             //Break up the firstPlace letter and number
             char letter1 = firstPlace.charAt(0);
             int num1;
-            num1 = Integer.parseInt(firstPlace.substring(1,p.length()-1));
+            num1 = Integer.parseInt(firstPlace.substring(1,firstPlace.length()));
 
             String newS = letter1 + "" + num1;
             greyedOut.add(newS);
             newS = letter2 + "" + num2;
             greyedOut.add(newS);
-
+            System.out.println("Building Path");
             //Add all the buttons between button1 and button2 to be greyed out
             if(letter1 == letter2){
                 for(int i = num1; i<num2; i++){
@@ -454,6 +515,7 @@ public class Client extends Application {
             }
 
             //Disable buttons for the path, sets abbreviations, enables buttons that should be enabled afterwards
+            System.out.println("Enabling Buttons");
             ObservableList<Node> test = playerGrid.getChildren();
             int counter = 0;
             for(Node t:test){
@@ -484,6 +546,31 @@ public class Client extends Application {
 
         }
 
+    }
+    public void updateShotBoard(String c, String result){
+        System.out.println(c.length());
+        
+        String num = c.substring(2,c.length());
+        System.out.println(num);
+        String letter = c.substring(0,1);
+        String newCoord = letter+num;
+        System.out.println(newCoord);
+        ObservableList<Node> test = oponentGrid.getChildren();
+        int counter = 0;
+        for(Node t:test){
+
+            Button b = (Button)t;
+            if(b.getText().equals(newCoord)){
+                b.setDisable(true);
+                b.setText(result);
+            }
+            else{
+                b.setDisable(true);
+            }
+            counter++;
+            if (counter == 100)
+                break;
+        }
     }
     public void GUIGameLoop(){
         Task<Void> task = new Task<Void>() {
@@ -537,7 +624,14 @@ public class Client extends Application {
             }
             // Send the updated boards.
             gi.setBoards(gameBoards);
+            
         } while(!gi.isGameOver());
         System.out.println("The Game is Over!");
+    }
+    public void printBoardInfo(Board b){
+        List<Ship> ships = b.getShipList();
+        for(Ship ship: ships){
+            System.out.println(ship.getName() + ": " + ship.getCoordinates());
+        }
     }
 }

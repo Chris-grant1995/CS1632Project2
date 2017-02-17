@@ -29,6 +29,7 @@ public class GameTracker {
     }
 
     public void wait(int playerID) {
+
         switch (state) {
             case INIT:
             {
@@ -41,7 +42,34 @@ public class GameTracker {
                     }
                 }
                 System.out.println("Playing");
-                state = GameState.PLAYING;
+                state = GameState.PLACING;
+                break;
+            }
+            case PLACING:
+            {
+                System.out.println("Placing Wait");
+                int shipCount =0;
+                while(shipCount != 10){
+                    for(Board board:gameBoards){
+                        shipCount+=board.getShipList().size();
+                    }
+
+                    if(shipCount == 10){
+                        break;
+                    }
+                    else{
+                        System.out.println(shipCount);
+                        shipCount =0;
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            System.err.println(e + " I can't sleep!");
+                        }
+                    }
+                }
+
+                setBoards(gameBoards);
+                state= GameState.PLAYING;
                 break;
             }
             case PLAYING:
@@ -69,11 +97,19 @@ public class GameTracker {
         gameBoards = boards;
         playerTurn = (playerTurn + 1) % registeredPlayers;
     }
+
+    public void setBoard(Board board, int playerID){
+        System.out.println("Player " + playerID + " board:");
+        System.out.println(board.getShipList());
+        gameBoards.remove(playerID);
+        gameBoards.add(playerID,board);
+    }
     
     public boolean isGameOver() {
         System.out.println("Checking if the game is over...");
         for(Board board : gameBoards) {
             if(board.areAllShipsSunk()) {
+                System.out.println("Returning True");
                 return true;
             }
         }

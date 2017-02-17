@@ -74,6 +74,9 @@ public class ServerWrapper implements ServerInterface {
     public void setBoards(byte [] boards) {
         tracker.setBoards((ArrayList<Board>)Serializer.fromByteArray(boards));
     }
+
+    @Override
+    public void setBoard(byte [] board, int myPlayerID) { tracker.setBoard((Board) Serializer.fromByteArray(board), myPlayerID);}
     
     public boolean isGameOver(){
         return tracker.isGameOver();

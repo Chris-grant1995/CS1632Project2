@@ -17,4 +17,5 @@ public interface ServerInterface {
     @WebMethod byte [] getBoards();
     @WebMethod void setBoards(byte [] boards);
     @WebMethod boolean isGameOver();
+    @WebMethod void setBoard(byte [] board, int playerID);
 }
