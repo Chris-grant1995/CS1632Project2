@@ -303,7 +303,7 @@ public class Client extends Application {
                     }
 
                     gameBoards = gi.getBoards();
-                    System.out.println(gameBoards.get((myPlayerID )).toString(true));
+                    System.out.println(gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).toString(true));
                     System.out.println(shot);
                     Coordinate move = new Coordinate(shot);
                     Ship ship = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).makeMove(move);

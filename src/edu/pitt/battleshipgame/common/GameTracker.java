@@ -58,7 +58,7 @@ public class GameTracker {
                         break;
                     }
                     else{
-                        System.out.println(shipCount);
+                        //System.out.println(shipCount);
                         shipCount =0;
                         try {
                             Thread.sleep(100);
