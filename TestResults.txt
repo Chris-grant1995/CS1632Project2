@@ -1,7 +1,27 @@
 TC-1a: Passed
 TC-1b: Passed
-TC-2: N/A
-TC-2a: N/A
-TC-3.1 N/A
-TC-3.2 Failed
-TC-3.3: 
+TC-2: Passed
+TC-3.1: Passed
+TC-3.2 Passed
+TC-3.3: Passed
+TC-3.4: Passed
+TC-3.5: Passed
+TC-3.6: Passed
+TC-4.1: Passed
+TC-4.2: Passed
+TC-4.3: Passed
+TC-4.4: Failed
+TC-4.5: Failed
+TC-4.6: Failed
+TC-5.1: Passed
+TC-5.2: Failed
+TC-5.3: Passed
+TC-5.4: Failed
+TC-5.5: Failed
+TC-5.6: Passed
+TC-5.7: Passed
+TC-Non1a: Can't Test
+TC-Non1b: Can't Test
+TC-Non1c: Passed
+TC-Non3a: Passed
+TC-Non3b: Passed
