@@ -294,6 +294,22 @@ public class Client extends Application {
                     System.out.println("Your Turn!");
                     
                     updateMessage("Its your turn!");
+                    gameBoards = gi.getBoards();
+                    Coordinate lastShot = gi.getLastShot();
+                    System.out.println(lastShot);
+                    if(lastShot != null){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHitsOnPlayerBoard(lastShot);
+                            }
+                        });
+
+                    }
+                    else{
+                        System.out.println("No Shots Fired, this is the first move");
+                    }
+
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -305,7 +321,8 @@ public class Client extends Application {
                         Thread.sleep(1000);
                     }
 
-                    gameBoards = gi.getBoards();
+
+
                     Board oppBoard = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS);
                     System.out.println("Opponsent's Board");
                     printBoardInfo(oppBoard);
@@ -313,6 +330,7 @@ public class Client extends Application {
                     //System.out.println(gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).toString(true));
                     System.out.println(shot);
                     Coordinate move = new Coordinate(shot);
+                    gi.sendMove(move);
                     Ship ship = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).makeMove(move);
                     if(ship == null) {
                         updateMessage("Miss");
@@ -533,7 +551,8 @@ public class Client extends Application {
                 if(greyedOut.contains(b.getText()) || shipAbbr.contains(b.getText())){
                     placedCoords.add(b.getText());
                     if(greyedOut.contains(b.getText())){
-                        b.setText(abbr);
+                        b.setText(b.getText() + abbr);
+                        shipAbbr.add(b.getText());
                     }
 
                     b.setDisable(true);
@@ -580,39 +599,6 @@ public class Client extends Application {
                 break;
         }
     }
-    public void GUIGameLoop(){
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusLabel.setText("Waiting for your turn");
-                    }
-                });
-                gi.wait(myPlayerID);
-                System.out.println("Your Turn!");
-                updateMessage("Its your turn!");
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusLabel.setText("Its your turn!");
-                        enableOponentGrid();
-                    }
-                });
-
-                return null;
-            }
-        };
-
-        //statusLabel.textProperty().bind(task.messageProperty());
-
-        Thread th = new Thread(task);
-        th.setDaemon(true);
-        th.start();
-
-
-    }
     public static void gameLoop() {
         System.out.println("The game is starting!");
         do {
@@ -640,6 +626,24 @@ public class Client extends Application {
         List<Ship> ships = b.getShipList();
         for(Ship ship: ships){
             System.out.println(ship.getName() + ": " + ship.getCoordinates());
+        }
+    }
+    public void updateHitsOnPlayerBoard(Coordinate c){
+        String text = c.toString();
+        String shot = text.substring(0,1) + text.substring(2,text.length());
+        ObservableList<Node> test = playerGrid.getChildren();
+        int counter = 0;
+        for(Node t:test) {
+            Button b = (Button)t;
+            if(b.getText().equals(shot)){
+                b.setText("Miss");
+            }
+            else if(b.getText().contains(shot)){
+                b.setText("Hit");
+            }
+            counter++;
+            if(counter == 100)
+                break;
         }
     }
 }

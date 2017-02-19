@@ -10,4 +10,6 @@ public interface GameInterface {
     void setBoards(ArrayList<Board> boards);
     boolean isGameOver();
     void setBoard(Board board, int playerID);
+    void sendMove(Coordinate coord);
+    Coordinate getLastShot();
 }

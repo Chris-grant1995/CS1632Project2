@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.pitt.battleshipgame.common.board.Board;
+import edu.pitt.battleshipgame.common.board.Coordinate;
 
 public class GameTracker {
     public static final int MAX_PLAYERS = 2;
@@ -11,6 +12,7 @@ public class GameTracker {
     private ArrayList<Board> gameBoards;
     private GameState state = GameState.INIT;
     private int playerTurn = 0;
+    public Coordinate lastShot;
     Object lock;
     
     public GameTracker() {
@@ -27,7 +29,12 @@ public class GameTracker {
         }
         return registeredPlayers - 1;
     }
-
+    public void sendMove(Coordinate move){
+        lastShot = move;
+    }
+    public Coordinate getLastShot(){
+        return lastShot;
+    }
     public void wait(int playerID) {
 
         switch (state) {

@@ -9,6 +9,7 @@ import edu.pitt.battleshipgame.common.board.Board;
 import edu.pitt.battleshipgame.common.Serializer;
 import edu.pitt.battleshipgame.common.GameTracker;
 import edu.pitt.battleshipgame.common.ServerInterface;
+import edu.pitt.battleshipgame.common.board.Coordinate;
 
 //Service Implementation
 @WebService(endpointInterface = "edu.pitt.battleshipgame.common.ServerInterface")
@@ -77,6 +78,14 @@ public class ServerWrapper implements ServerInterface {
 
     @Override
     public void setBoard(byte [] board, int myPlayerID) { tracker.setBoard((Board) Serializer.fromByteArray(board), myPlayerID);}
+
+    @Override
+    public void sendMove(byte[] coord){
+        tracker.sendMove((Coordinate) Serializer.fromByteArray(coord));
+    }
+    public byte[] getLastShot(){
+        return Serializer.toByteArray(tracker.getLastShot());
+    }
     
     public boolean isGameOver(){
         return tracker.isGameOver();

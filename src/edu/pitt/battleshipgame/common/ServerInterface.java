@@ -18,4 +18,6 @@ public interface ServerInterface {
     @WebMethod void setBoards(byte [] boards);
     @WebMethod boolean isGameOver();
     @WebMethod void setBoard(byte [] board, int playerID);
+    @WebMethod void sendMove(byte[] coord);
+    @WebMethod byte[] getLastShot();
 }

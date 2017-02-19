@@ -50,6 +50,14 @@ public class ClientWrapper implements GameInterface {
     public void setBoard(Board board, int myPlayerID) {
         serverInterface.setBoard(Serializer.toByteArray(board), myPlayerID);
     }
+    @Override
+    public void sendMove(Coordinate coord){
+        serverInterface.sendMove(Serializer.toByteArray(coord));
+    }
+    @Override
+    public Coordinate getLastShot(){
+        return (Coordinate) Serializer.fromByteArray(serverInterface.getLastShot());
+    }
     /**
      * Client side wrapper around the 
      * @return 
