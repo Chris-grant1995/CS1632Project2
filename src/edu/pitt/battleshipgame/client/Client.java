@@ -113,14 +113,17 @@ public class Client extends Application {
     }
 
     void enableOponentGrid(){
-        //Disables all buttons on the top grid
+        //enables all buttons on the top grid that have not been fired on.
 
         ObservableList<Node> test = oponentGrid.getChildren();
         int counter = 0;
         for(Node t:test){
 
             Button b = (Button)t;
-            b.setDisable(false);
+            if(!(b.getText().equals("Hit") || b.getText().equals("Miss"))){
+                b.setDisable(false);
+            }
+
             counter++;
             if (counter == 100)
                 break;
@@ -303,7 +306,11 @@ public class Client extends Application {
                     }
 
                     gameBoards = gi.getBoards();
-                    System.out.println(gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).toString(true));
+                    Board oppBoard = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS);
+                    System.out.println("Opponsent's Board");
+                    printBoardInfo(oppBoard);
+
+                    //System.out.println(gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).toString(true));
                     System.out.println(shot);
                     Coordinate move = new Coordinate(shot);
                     Ship ship = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).makeMove(move);
@@ -326,6 +333,7 @@ public class Client extends Application {
                             updateShotBoard(shot, "Hit");
                         }
                         });
+                        Thread.sleep(5000);
                     } 
                     else {
                             updateMessage("Hit");
