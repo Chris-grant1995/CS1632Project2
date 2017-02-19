@@ -68,8 +68,13 @@ public class Board implements Serializable {
     }
     
     public boolean areAllShipsSunk() {
+        System.out.println("ShipList Length: " + shipList.size());
         for (Ship s : shipList) {
+            System.out.println(s.getName());
+            System.out.println(s.getCoordinates());
+            System.out.println(s.isSunk());
             if (! s.isSunk()) {
+                System.out.println("Not All Ships are sunk");
                 return false;
             }
         }

@@ -44,10 +44,10 @@ public class Coordinate implements Serializable {
      * before it gets to the server.
      */
     public void setCoordinates(String coord) throws IllegalArgumentException {
-        if (coord.length() != 3) {
+        /*if (coord.length() != 3) {
             throw new IllegalArgumentException(formattingRules);
         }
-        
+        */
         int _col = 0;
         String [] coordinates = coord.split(":");
         if (columnMap.keySet().contains(coordinates[0].charAt(0))) {

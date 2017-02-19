@@ -58,4 +58,36 @@ public abstract class ShipFactory {
                 throw new IllegalArgumentException(type + " does not identify a valid ShipType.");
         }
     }
+    public static String getAbbreviationFromType(Ship.ShipType type) {
+        switch (type) {
+            case BATTLESHIP:
+                return "B";
+            case CARRIER:
+                return "CA";
+            case CRUISER:
+                return "CR";
+            case SUBMARINE:
+                return "S";
+            case DESTROYER:
+                return "D";
+            default:
+                throw new IllegalArgumentException(type + " does not identify a valid ShipType.");
+        }
+    }
+    public static int getLengthFromType(Ship.ShipType type) {
+        switch (type) {
+            case BATTLESHIP:
+                return Battleship.LENGTH;
+            case CARRIER:
+                return Carrier.LENGTH;
+            case CRUISER:
+                return Cruiser.LENGTH;
+            case SUBMARINE:
+                return Submarine.LENGTH;
+            case DESTROYER:
+                return Destroyer.LENGTH;
+            default:
+                throw new IllegalArgumentException(type + " does not identify a valid ShipType.");
+        }
+    }
 }
