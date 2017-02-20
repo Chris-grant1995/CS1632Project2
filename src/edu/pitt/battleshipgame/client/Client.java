@@ -291,6 +291,9 @@ public class Client extends Application {
                     updateMessage("Waiting for your turn");
 
                     gi.wait(myPlayerID);
+                    if(gi.isGameOver()){
+                        break;
+                    }
                     System.out.println("Your Turn!");
                     
                     updateMessage("Its your turn!");
@@ -369,6 +372,13 @@ public class Client extends Application {
 
                     } while(!gi.isGameOver());
                     updateMessage("Game Finished");
+                    Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        //statusLabel.setText("Its your turn!");
+                        disableOponentGrid();
+                    }
+                    });
 
 
                 return 0;
