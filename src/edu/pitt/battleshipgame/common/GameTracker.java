@@ -13,6 +13,8 @@ public class GameTracker {
     private GameState state = GameState.INIT;
     private int playerTurn = 0;
     public Coordinate lastShot;
+    public boolean gameOver = false;
+    public String[] messages = new String[2];
     Object lock;
     
     public GameTracker() {
@@ -114,6 +116,9 @@ public class GameTracker {
     
     public boolean isGameOver() {
         System.out.println("Checking if the game is over...");
+        if(gameOver){
+            return true;
+        }
         for(Board board : gameBoards) {
             if(board.areAllShipsSunk()) {
                 System.out.println("Returning True");
@@ -121,5 +126,16 @@ public class GameTracker {
             }
         }
         return false;
+    }
+    public void sendMessage(String message, int playerID){
+        if(message.equals("Opponent Lost Game due to timeout")){
+            gameOver = true;
+            messages[playerID] = "You lose the game due to timeout";
+        }
+
+        messages[(playerID+1)%registeredPlayers] = message;
+    }
+    public String checkMessage(int playerID){
+        return messages[playerID];
     }
 }

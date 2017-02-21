@@ -12,4 +12,6 @@ public interface GameInterface {
     void setBoard(Board board, int playerID);
     void sendMove(Coordinate coord);
     Coordinate getLastShot();
+    void sendMessageToOtherPlayer(String message, int playerID);
+    String checkMessages(int playerID);
 }

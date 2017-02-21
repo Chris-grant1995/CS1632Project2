@@ -86,6 +86,15 @@ public class ServerWrapper implements ServerInterface {
     public byte[] getLastShot(){
         return Serializer.toByteArray(tracker.getLastShot());
     }
+
+    @Override
+    public void getMessage(byte[] message, int playerID){
+        tracker.sendMessage((String)Serializer.fromByteArray(message), playerID);
+    }
+    @Override
+    public byte[] checkMessage(int playerID){
+        return Serializer.toByteArray(tracker.checkMessage(playerID));
+    }
     
     public boolean isGameOver(){
         return tracker.isGameOver();

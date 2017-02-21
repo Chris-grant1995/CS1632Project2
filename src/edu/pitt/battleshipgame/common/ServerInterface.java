@@ -20,4 +20,6 @@ public interface ServerInterface {
     @WebMethod void setBoard(byte [] board, int playerID);
     @WebMethod void sendMove(byte[] coord);
     @WebMethod byte[] getLastShot();
+    @WebMethod void getMessage(byte[] message, int playerID);
+    @WebMethod byte[] checkMessage(int playerID);
 }

@@ -66,7 +66,17 @@ public class ClientWrapper implements GameInterface {
     public ArrayList<Board> getBoards() {
         return (ArrayList<Board>) Serializer.fromByteArray(serverInterface.getBoards());
     }
-    
+    @Override
+    public void sendMessageToOtherPlayer(String message, int myPlayerID){
+        serverInterface.getMessage(Serializer.toByteArray(message), myPlayerID);
+    }
+
+    @Override
+    public String checkMessages(int myPlayerID){
+        String message = (String) Serializer.fromByteArray(serverInterface.checkMessage(myPlayerID));
+        return message;
+    }
+
     public boolean isGameOver() {
         return serverInterface.isGameOver();
     }
