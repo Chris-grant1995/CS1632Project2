@@ -39,6 +39,8 @@ public class Client extends Application {
     public String abbreviation = "";
     public ArrayList<String> shipAbbr = new ArrayList<>();
     public String shot = "None";
+    public boolean donePlacingShips = false;
+    public boolean moved = true;
     @FXML
     private ResourceBundle resources;
 
@@ -277,6 +279,7 @@ public class Client extends Application {
                 }
                 //Now that we are done placing ships, disable all buttons on the player's grid
                 updateMessage("Done Placing Ships");
+                donePlacingShips = true;
                 disablePlayerGrid();
                 printBoardInfo(board);
                 
@@ -284,18 +287,20 @@ public class Client extends Application {
                 gi.setBoard(board, myPlayerID);
                 updateMessage("Waiting for your opponent to finish placing");
                 gi.wait(myPlayerID);
+
                 
                 //GUIGameLoop();
-                do{
+                while(!gi.isGameOver()){
 
                     updateMessage("Waiting for your turn");
 
                     gi.wait(myPlayerID);
                     if(gi.isGameOver()){
+                        updateMessage("You Lost!");
                         break;
                     }
                     System.out.println("Your Turn!");
-                    
+                    moved = false;
                     updateMessage("Its your turn!");
                     gameBoards = gi.getBoards();
                     Coordinate lastShot = gi.getLastShot();
@@ -325,10 +330,7 @@ public class Client extends Application {
                     }
 
 
-
-                    Board oppBoard = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS);
-                    System.out.println("Opponsent's Board");
-                    printBoardInfo(oppBoard);
+                    moved = true;
 
                     //System.out.println(gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).toString(true));
                     System.out.println(shot);
@@ -369,9 +371,12 @@ public class Client extends Application {
                     gi.setBoards(gameBoards);
                     shot = "None";
                     System.out.println("Loop Done");
+                    if(gi.isGameOver()){
+                        updateMessage("You Won!");
+                    }
 
-                    } while(!gi.isGameOver());
-                    updateMessage("Game Finished");
+                    }
+                    //updateMessage("Game Finished");
                     Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -386,9 +391,77 @@ public class Client extends Application {
         };
         //Create the new thread and start it.
         statusLabel.textProperty().bind(task.messageProperty());
-        Thread th = new Thread(task);
-        th.setDaemon(true);
-        th.start();
+        Thread gameloop = new Thread(task);
+        gameloop.setDaemon(true);
+        gameloop.start();
+
+        Task<Void> timeout = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                int count = 0;
+                while(!donePlacingShips){
+                    Thread.sleep(1000);
+                    count++;
+                    System.out.println(count);
+                    if(count == 120){
+                        sendMessageToOtherPlayer("Opponent Lost Game due to timeout");
+                    }
+                }
+                //TODO Add the same timeout for moved (30 seconds)
+                count = 0;
+                while(true){
+                    while(!moved){
+                        Thread.sleep(1000);
+                        count++;
+                        if(count == 30){
+                            sendMessageToOtherPlayer("Opponent Lost Game due to timeout");
+                        }
+                    }
+                    count = 0;
+                    if(1!=1){
+                        break;
+                    }
+                }
+
+
+                return null;
+            }
+        };
+
+        Thread timer = new Thread(timeout);
+        timer.setDaemon(true);
+        timer.start();
+
+        Task<Void> messageChecker = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+
+                while(true){
+                    String message = gi.checkMessages(myPlayerID);
+                    if(message != null) {
+                        //TODO Update Status Label
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                //statusLabel.setText("Its your turn!");
+                                statusLabel.textProperty().unbind();
+                                statusLabel.setText(message);
+                                disableOponentGrid();
+                                disablePlayerGrid();
+                            }
+                        });
+                        break;
+                    }
+                    Thread.sleep(1000);
+                }
+
+                return null;
+            }
+        };
+
+        Thread messageCheck = new Thread(messageChecker);
+        messageCheck.setDaemon(true);
+        messageCheck.start();
     }
     public void updatePlaceBoard(String p, int length, String abbr){
         //Method that disables buttons that need to be disabled, and updates button labels
@@ -655,5 +728,8 @@ public class Client extends Application {
             if(counter == 100)
                 break;
         }
+    }
+    public void sendMessageToOtherPlayer(String message){
+        gi.sendMessageToOtherPlayer(message, myPlayerID);
     }
 }
