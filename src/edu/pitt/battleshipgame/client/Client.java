@@ -8,6 +8,8 @@ import edu.pitt.battleshipgame.common.GameInterface;
 import edu.pitt.battleshipgame.common.GameTracker;
 
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -158,26 +160,57 @@ public class Client extends Application {
         }
     }
     @FXML
-    void startGame(ActionEvent event) throws InterruptedException {
+    void startGame(ActionEvent event) throws InterruptedException, ExecutionException {
 
 
 
-        //System.out.println("Testing");
-        Button b = (Button)event.getSource();
+        System.out.println("Testing");
+
        // System.out.println("Testing2");
-        b.setVisible(false);
+
+
+
+
         gi = new ClientWrapper();
         myPlayerID = gi.registerPlayer();
+        Button b = (Button)event.getSource();
+        b.setVisible(false);
         statusLabel.setText("Waiting For another player to connect, You are player" + myPlayerID);
-        gi.wait(myPlayerID);
-        System.out.println("Testing Done Waiting");
-        statusLabel.setText("Both Players have joined, starting game");
 
-        gameBoards = gi.getBoards();
-        Board board = gameBoards.get(myPlayerID);
-        enablePlayerGrid();
-        //statusLabel.setText("Please enter a start coordinate to place your Battleship");
-        GUIPlaceShips(board);
+        Task<Void> gameTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                if(myPlayerID == 0){
+                    gi.wait(myPlayerID);
+                }
+
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusLabel.setText("Both Players have joined, starting game");
+                        gameBoards = gi.getBoards();
+                        Board board = gameBoards.get(myPlayerID);
+                        enablePlayerGrid();
+                        //statusLabel.setText("Please enter a start coordinate to place your Battleship");
+                        GUIPlaceShips(board);
+                    }
+                });
+
+
+
+                return null;
+            }
+        };
+
+
+
+        //System.out.println("Testing Done Waiting");
+        //statusLabel.setText("Both Players have joined, starting game");
+
+        Thread gameThread = new Thread(gameTask);
+        gameThread.setDaemon(true);
+        gameThread.start();
 
         //Thread.currentThread().wait();
         /*
@@ -202,6 +235,8 @@ public class Client extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("ClientGUI.fxml"));
         primaryStage.setTitle("Battleship");
         primaryStage.setScene(new Scene(root, 1000, 1000));
+
+
         primaryStage.show();
         //Thread.sleep(5000);
 
