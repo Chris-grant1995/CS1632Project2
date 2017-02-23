@@ -136,7 +136,7 @@
       </GridPane>
       <Label layoutX="100.0" layoutY="431.0" prefHeight="17.0" prefWidth="241.0" text="Your Board ▼ Opponent's Board ▲" />
       <Label fx:id="statusLabel" layoutX="387.0" layoutY="431.0" prefHeight="17.0" prefWidth="514.0" text="statusLabel" />
-      <Button layoutX="432.0" layoutY="861.0" mnemonicParsing="false" onAction="#startGame" prefHeight="27.0" prefWidth="136.0" text="Click to Begin" />
+      <Button layoutX="764.0" layoutY="861.0" mnemonicParsing="false" onAction="#startGame" prefHeight="27.0" prefWidth="136.0" text="Click to Begin" />
       <GridPane fx:id="playerGrid" gridLinesVisible="true" layoutX="100.0" layoutY="448.0" prefHeight="400.0" prefWidth="800.0">
          <children>
             <Button mnemonicParsing="false" onAction="#place" text="A8" GridPane.rowIndex="7" />
@@ -265,5 +265,6 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
       </GridPane>
+      <TextField fx:id="textfield" layoutX="100.0" layoutY="861.0" onAction="#setIP" prefHeight="27.0" prefWidth="241.0" promptText="Enter Server IP" />
    </children>
 </Pane>

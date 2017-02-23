@@ -13,11 +13,15 @@ import edu.pitt.battleshipgame.common.*;
 public class ClientWrapper implements GameInterface {
     ServerInterface serverInterface = null;
     int myPlayerID;
+    static String ip;
 
     private static ServerInterface getServer() {
         URL url = null;
         try {
-            url = new URL("http://localhost:9999/battleship?wsdl");
+            //url = new URL("http://localhost:9999/battleship?wsdl");
+            String urlString = "http://" + ip + ":9999/battleship?wsdl";
+            url = new URL(urlString);
+            //url = new URL("http://192.168.0.19:9999/battleship?wsdl");
         } catch (MalformedURLException e) {
             System.err.println(e);
         }
@@ -26,7 +30,8 @@ public class ClientWrapper implements GameInterface {
         return service.getPort(ServerInterface.class);
     }
     
-    public ClientWrapper() {
+    public ClientWrapper(String ipAddr) {
+        ip = ipAddr;
         serverInterface = getServer();
     }
     

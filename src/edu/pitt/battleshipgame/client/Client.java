@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 import javafx.application.Application;
@@ -43,11 +44,16 @@ public class Client extends Application {
     public String shot = "None";
     public boolean donePlacingShips = false;
     public boolean moved = true;
+    public String serverIP;
     @FXML
     private ResourceBundle resources;
 
     @FXML
     private URL location;
+
+    @FXML
+    private TextField textfield;
+
 
     @FXML
     private GridPane oponentGrid;
@@ -62,11 +68,18 @@ public class Client extends Application {
     void initialize() {
         assert a1 != null : "fx:id=\"a1\" was not injected: check your FXML file 'Test.fxml'.";
         System.out.println("In initialize()");
-        statusLabel.setText("Press the Button Below to Begin");
+        statusLabel.setText("Enter the Server IP and then press the Button Below to Begin");
+
         disableOponentGrid();
         disablePlayerGrid();
 
 
+    }
+
+    @FXML
+    void setIP(ActionEvent event) {
+        System.out.println(textfield.getText());
+        serverIP=textfield.getText();
     }
     @FXML
     void fire(ActionEvent event) {
@@ -162,16 +175,16 @@ public class Client extends Application {
     @FXML
     void startGame(ActionEvent event) throws InterruptedException, ExecutionException {
 
+        serverIP = textfield.getText();
 
-
-        System.out.println("Testing");
+        System.out.println(serverIP);
 
        // System.out.println("Testing2");
 
 
 
 
-        gi = new ClientWrapper();
+        gi = new ClientWrapper(serverIP);
         myPlayerID = gi.registerPlayer();
         Button b = (Button)event.getSource();
         b.setVisible(false);
