@@ -188,6 +188,7 @@ public class Client extends Application {
         myPlayerID = gi.registerPlayer();
         Button b = (Button)event.getSource();
         b.setVisible(false);
+        textfield.setVisible(false);
         statusLabel.setText("Waiting For another player to connect, You are player" + myPlayerID);
 
         Task<Void> gameTask = new Task<Void>() {
