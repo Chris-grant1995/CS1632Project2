@@ -2,6 +2,7 @@ package edu.pitt.battleshipgame.server;
 
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceProvider;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import edu.pitt.battleshipgame.common.Serializer;
 import edu.pitt.battleshipgame.common.GameTracker;
 import edu.pitt.battleshipgame.common.ServerInterface;
 import edu.pitt.battleshipgame.common.board.Coordinate;
+import javafx.concurrent.Task;
+import java.lang.Thread;
 
 import java.net.UnknownHostException;
 
@@ -22,13 +25,30 @@ public class ServerWrapper implements ServerInterface {
     // We have a pseudo singleton around the Server object.
     private static GameTracker tracker = null;
 
-    public ServerWrapper() throws UnknownHostException {
+
+    public ServerWrapper() throws UnknownHostException, InterruptedException {
         tracker = getInstance();
+        tracker.createThreads();
+
+        /*Task<Void> test = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Testing");
+                return null;
+            }
+        };
+        Thread t = new Thread(test);
+        t.setDaemon(true);
+        t.start();
+
+        */
     }
     
-    public static GameTracker getInstance() throws UnknownHostException {
+
+    public static GameTracker getInstance() throws UnknownHostException, InterruptedException {
         if(tracker == null) {
             tracker = new GameTracker();
+
         }
         return tracker;
     }

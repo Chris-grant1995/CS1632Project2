@@ -78,6 +78,17 @@ public class Client extends Application {
         disablePlayerGrid();
 
 
+        Task<Void> test = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Testing");
+                return null;
+            }
+        };
+        Thread t = new Thread(test);
+        t.setDaemon(true);
+        t.start();
+
     }
 
     @FXML
@@ -230,6 +241,37 @@ public class Client extends Application {
         gameThread.setDaemon(true);
         gameThread.start();
 
+
+        Task<Void> messageChecker = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+
+                while(true){
+                    String message = gi.checkMessages(myPlayerID);
+                    if(message != null) {
+                        //TODO Update Status Label
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                //statusLabel.setText("Its your turn!");
+                                statusLabel.textProperty().unbind();
+                                statusLabel.setText(message);
+                                disableOponentGrid();
+                                disablePlayerGrid();
+                            }
+                        });
+                        break;
+                    }
+                    Thread.sleep(10);
+                }
+
+                return null;
+            }
+        };
+
+        Thread messageCheck = new Thread(messageChecker);
+        messageCheck.setDaemon(true);
+        messageCheck.start();
         //Thread.currentThread().wait();
         /*
         while(!statusLabel.getText().equals("Done Placing Ships")){
@@ -386,7 +428,7 @@ public class Client extends Application {
                         }
                     });
                     while(shot.equals("None")){
-                        Thread.sleep(1000);
+                        Thread.sleep(10);
                     }
 
 
@@ -502,36 +544,7 @@ public class Client extends Application {
         timer.setDaemon(true);
         timer.start();
 
-        Task<Void> messageChecker = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
 
-                while(true){
-                    String message = gi.checkMessages(myPlayerID);
-                    if(message != null) {
-                        //TODO Update Status Label
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                //statusLabel.setText("Its your turn!");
-                                statusLabel.textProperty().unbind();
-                                statusLabel.setText(message);
-                                disableOponentGrid();
-                                disablePlayerGrid();
-                            }
-                        });
-                        break;
-                    }
-                    Thread.sleep(10);
-                }
-
-                return null;
-            }
-        };
-
-        Thread messageCheck = new Thread(messageChecker);
-        messageCheck.setDaemon(true);
-        messageCheck.start();
     }
     public void updatePlaceBoard(String p, int length, String abbr){
         //Method that disables buttons that need to be disabled, and updates button labels

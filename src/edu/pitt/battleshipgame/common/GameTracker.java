@@ -7,6 +7,8 @@ import java.util.List;
 
 import edu.pitt.battleshipgame.common.board.Board;
 import edu.pitt.battleshipgame.common.board.Coordinate;
+import javafx.concurrent.Task;
+import java.lang.Thread;
 
 public class GameTracker {
     public static final int MAX_PLAYERS = 2;
@@ -17,16 +19,50 @@ public class GameTracker {
     public Coordinate lastShot;
     public boolean gameOver = false;
     public String[] messages = new String[2];
+    public int[] counts = {0,0};
     Object lock;
+    public boolean test = false;
     
-    public GameTracker() throws UnknownHostException {
+    public GameTracker() throws UnknownHostException, InterruptedException {
         // Exists to protect this object from direct instantiation
         lock = new Object();
         gameBoards = new ArrayList<Board>(MAX_PLAYERS);
         System.out.println("Server constructed.");
-        System.out.println("IP:" + Inet4Address.getLocalHost().getHostAddress());
-    }
 
+
+
+        //System.out.println("IP:" + Inet4Address.getLocalHost().getHostAddress());
+    }
+    public void createThreads() throws InterruptedException {
+        Task<Void> player0Connection = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                test = true;
+                System.out.println("Hello From 0");
+                checkConnection(0);
+                return null;
+            }
+        };
+
+        Thread player0 = new Thread(player0Connection);
+        player0.setDaemon(true);
+        player0.start();
+        System.out.println(player0.isAlive());
+
+        Task<Void> player1Connection = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Hello from 1");
+                checkConnection(1);
+                return null;
+            }
+        };
+        System.out.println(player0.isAlive());
+        Thread player1 = new Thread(player1Connection);
+        player1.setDaemon(true);
+        player1.start();
+        System.out.println(player0.isAlive());
+    }
     public int registerPlayer() {
         synchronized(lock) {
             registeredPlayers++;
@@ -139,6 +175,25 @@ public class GameTracker {
         messages[(playerID+1)%registeredPlayers] = message;
     }
     public String checkMessage(int playerID){
+        counts[playerID]++;
         return messages[playerID];
+    }
+    public void checkConnection(int playerID) throws InterruptedException {
+        while(counts[playerID] !=0){
+            System.out.println("Test");
+            Thread.sleep(1000);
+        }
+        int count = 0;
+        while(!gameOver){
+            count++;
+            System.out.println(count + "" + playerID);
+            if(count > counts[playerID] + 2){
+                System.out.println("Player "+ playerID + "DCed");
+                sendMessage("Your opponent has disconnected", (playerID+1)%registeredPlayers);
+
+            }
+            Thread.sleep(1000);
+        }
+
     }
 }
