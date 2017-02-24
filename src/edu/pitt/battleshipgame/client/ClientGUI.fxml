@@ -4,9 +4,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pitt.battleshipgame.client.Client">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pitt.battleshipgame.client.Client">
    <children>
-      <GridPane fx:id="oponentGrid" gridLinesVisible="true" layoutX="100.0" layoutY="14.0" prefHeight="400.0" prefWidth="800.0">
+      <GridPane fx:id="oponentGrid" gridLinesVisible="true" layoutX="42.0" layoutY="14.0" prefHeight="325.0" prefWidth="717.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -134,10 +134,10 @@
             <Button mnemonicParsing="false" onAction="#fire" text="I9" GridPane.columnIndex="8" GridPane.rowIndex="8" />
          </children>
       </GridPane>
-      <Label layoutX="100.0" layoutY="431.0" prefHeight="17.0" prefWidth="241.0" text="Your Board ▼ Opponent's Board ▲" />
-      <Label fx:id="statusLabel" layoutX="387.0" layoutY="431.0" prefHeight="17.0" prefWidth="514.0" text="statusLabel" />
-      <Button layoutX="764.0" layoutY="861.0" mnemonicParsing="false" onAction="#startGame" prefHeight="27.0" prefWidth="136.0" text="Click to Begin" />
-      <GridPane fx:id="playerGrid" gridLinesVisible="true" layoutX="100.0" layoutY="448.0" prefHeight="400.0" prefWidth="800.0">
+      <Label layoutX="42.0" layoutY="367.0" prefHeight="17.0" prefWidth="241.0" text="Your Board ▼ Opponent's Board ▲" />
+      <Label fx:id="statusLabel" layoutX="313.0" layoutY="367.0" prefHeight="17.0" prefWidth="443.0" text="statusLabel" />
+      <Button layoutX="576.0" layoutY="753.0" mnemonicParsing="false" onAction="#startGame" prefHeight="27.0" prefWidth="136.0" text="Click to Begin" />
+      <GridPane fx:id="playerGrid" gridLinesVisible="true" layoutX="42.0" layoutY="409.0" prefHeight="325.0" prefWidth="717.0">
          <children>
             <Button mnemonicParsing="false" onAction="#place" text="A8" GridPane.rowIndex="7" />
             <Button mnemonicParsing="false" onAction="#place" text="A3" GridPane.rowIndex="2" />
@@ -265,6 +265,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
       </GridPane>
-      <TextField fx:id="textfield" layoutX="100.0" layoutY="861.0" onAction="#setIP" prefHeight="27.0" prefWidth="241.0" promptText="Enter Server IP" />
+      <TextField fx:id="textfield" layoutX="42.0" layoutY="753.0" onAction="#setIP" prefHeight="27.0" prefWidth="241.0" promptText="Enter Server IP" />
+      <Label fx:id="timerLabel" layoutX="283.0" layoutY="758.0" prefHeight="17.0" prefWidth="293.0" text="timerLabel" />
    </children>
 </Pane>

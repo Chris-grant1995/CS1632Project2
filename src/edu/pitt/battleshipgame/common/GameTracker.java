@@ -1,5 +1,7 @@
 package edu.pitt.battleshipgame.common;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +19,12 @@ public class GameTracker {
     public String[] messages = new String[2];
     Object lock;
     
-    public GameTracker() {
+    public GameTracker() throws UnknownHostException {
         // Exists to protect this object from direct instantiation
         lock = new Object();
         gameBoards = new ArrayList<Board>(MAX_PLAYERS);
         System.out.println("Server constructed.");
+        System.out.println("IP:" + Inet4Address.getLocalHost().getHostAddress());
     }
 
     public int registerPlayer() {

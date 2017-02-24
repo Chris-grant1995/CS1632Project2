@@ -65,10 +65,14 @@ public class Client extends Application {
     private Label statusLabel;
 
     @FXML
+    private Label timerLabel;
+
+    @FXML
     void initialize() {
         assert a1 != null : "fx:id=\"a1\" was not injected: check your FXML file 'Test.fxml'.";
         System.out.println("In initialize()");
         statusLabel.setText("Enter the Server IP and then press the Button Below to Begin");
+        timerLabel.setVisible(false);
 
         disableOponentGrid();
         disablePlayerGrid();
@@ -248,7 +252,7 @@ public class Client extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("ClientGUI.fxml"));
         primaryStage.setTitle("Battleship");
-        primaryStage.setScene(new Scene(root, 1000, 1000));
+        primaryStage.setScene(new Scene(root, 800, 800));
 
 
         primaryStage.show();
@@ -450,30 +454,32 @@ public class Client extends Application {
         Thread gameloop = new Thread(task);
         gameloop.setDaemon(true);
         gameloop.start();
-
+        timerLabel.setVisible(true);
         Task<Void> timeout = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                int count = 0;
+                int count = 120;
                 while(!donePlacingShips){
                     Thread.sleep(1000);
-                    count++;
-                    System.out.println(count);
-                    if(count == 120){
+                    count--;
+                    updateMessage("Time to Finish Placing: " + count);
+                    //System.out.println(count);
+                    if(count == 0){
                         sendMessageToOtherPlayer("Opponent Lost Game due to timeout");
                     }
                 }
                 //TODO Add the same timeout for moved (30 seconds)
-                count = 0;
+                count = 30;
                 while(true){
                     while(!moved){
                         Thread.sleep(1000);
-                        count++;
-                        if(count == 30){
+                        count--;
+                        updateMessage("Time to Fire: " + count);
+                        if(count == 0){
                             sendMessageToOtherPlayer("Opponent Lost Game due to timeout");
                         }
                     }
-                    count = 0;
+                    count = 30;
                     if(1!=1){
                         break;
                     }
@@ -483,7 +489,7 @@ public class Client extends Application {
                 return null;
             }
         };
-
+        timerLabel.textProperty().bind(timeout.messageProperty());
         Thread timer = new Thread(timeout);
         timer.setDaemon(true);
         timer.start();
