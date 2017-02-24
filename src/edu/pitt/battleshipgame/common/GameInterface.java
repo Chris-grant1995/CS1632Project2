@@ -14,4 +14,5 @@ public interface GameInterface {
     Coordinate getLastShot();
     void sendMessageToOtherPlayer(String message, int playerID);
     String checkMessages(int playerID);
+    boolean checkConnection();
 }

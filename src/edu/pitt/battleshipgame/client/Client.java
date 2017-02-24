@@ -197,81 +197,88 @@ public class Client extends Application {
        // System.out.println("Testing2");
 
 
-
+        //statusLabel.setText("Connecting to Server");
 
         gi = new ClientWrapper(serverIP);
-        myPlayerID = gi.registerPlayer();
-        Button b = (Button)event.getSource();
-        b.setVisible(false);
-        textfield.setVisible(false);
-        statusLabel.setText("Waiting For another player to connect, You are player" + myPlayerID);
 
-        Task<Void> gameTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                if(myPlayerID == 0){
-                    gi.wait(myPlayerID);
-                }
+        if(gi.checkConnection()){
+            myPlayerID = gi.registerPlayer();
+            Button b = (Button)event.getSource();
+            b.setVisible(false);
+            textfield.setVisible(false);
+            statusLabel.setText("Waiting For another player to connect, You are player" + myPlayerID);
 
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusLabel.setText("Both Players have joined, starting game");
-                        gameBoards = gi.getBoards();
-                        Board board = gameBoards.get(myPlayerID);
-                        enablePlayerGrid();
-                        //statusLabel.setText("Please enter a start coordinate to place your Battleship");
-                        GUIPlaceShips(board);
+            Task<Void> gameTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    if(myPlayerID == 0){
+                        gi.wait(myPlayerID);
                     }
-                });
+
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            statusLabel.setText("Both Players have joined, starting game");
+                            gameBoards = gi.getBoards();
+                            Board board = gameBoards.get(myPlayerID);
+                            enablePlayerGrid();
+                            //statusLabel.setText("Please enter a start coordinate to place your Battleship");
+                            GUIPlaceShips(board);
+                        }
+                    });
 
 
 
-                return null;
-            }
-        };
-
-
-
-        //System.out.println("Testing Done Waiting");
-        //statusLabel.setText("Both Players have joined, starting game");
-
-        Thread gameThread = new Thread(gameTask);
-        gameThread.setDaemon(true);
-        gameThread.start();
-
-
-        Task<Void> messageChecker = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-
-                while(true){
-                    String message = gi.checkMessages(myPlayerID);
-                    if(message != null) {
-                        //TODO Update Status Label
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                //statusLabel.setText("Its your turn!");
-                                statusLabel.textProperty().unbind();
-                                statusLabel.setText(message);
-                                disableOponentGrid();
-                                disablePlayerGrid();
-                            }
-                        });
-                        break;
-                    }
-                    Thread.sleep(10);
+                    return null;
                 }
+            };
 
-                return null;
-            }
-        };
 
-        Thread messageCheck = new Thread(messageChecker);
-        messageCheck.setDaemon(true);
-        messageCheck.start();
+
+            //System.out.println("Testing Done Waiting");
+            //statusLabel.setText("Both Players have joined, starting game");
+
+            Thread gameThread = new Thread(gameTask);
+            gameThread.setDaemon(true);
+            gameThread.start();
+
+
+            Task<Void> messageChecker = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+
+                    while(true){
+                        String message = gi.checkMessages(myPlayerID);
+                        if(message != null) {
+                            //TODO Update Status Label
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //statusLabel.setText("Its your turn!");
+                                    statusLabel.textProperty().unbind();
+                                    statusLabel.setText(message);
+                                    disableOponentGrid();
+                                    disablePlayerGrid();
+                                }
+                            });
+                            break;
+                        }
+                        Thread.sleep(10);
+                    }
+
+                    return null;
+                }
+            };
+
+            Thread messageCheck = new Thread(messageChecker);
+            messageCheck.setDaemon(true);
+            messageCheck.start();
+        }
+        else{
+            statusLabel.setText("Unable to Connect to Server. Check IP and Try again");
+        }
+
         //Thread.currentThread().wait();
         /*
         while(!statusLabel.getText().equals("Done Placing Ships")){

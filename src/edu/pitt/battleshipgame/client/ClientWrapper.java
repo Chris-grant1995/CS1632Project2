@@ -14,6 +14,7 @@ public class ClientWrapper implements GameInterface {
     ServerInterface serverInterface = null;
     int myPlayerID;
     static String ip;
+    static boolean connected = false;
 
     private static ServerInterface getServer() {
         URL url = null;
@@ -21,20 +22,32 @@ public class ClientWrapper implements GameInterface {
             //url = new URL("http://localhost:9999/battleship?wsdl");
             String urlString = "http://" + ip + ":9999/battleship?wsdl";
             url = new URL(urlString);
+            System.out.println("test2");
             //url = new URL("http://192.168.0.19:9999/battleship?wsdl");
-        } catch (MalformedURLException e) {
-            System.err.println(e);
+
+            QName qname = new QName("http://server.battleshipgame.pitt.edu/", "ServerWrapperService");
+            System.out.println("test3");
+
+            Service service = Service.create(url, qname);
+            connected = true;
+            System.out.println("test4");
+            return service.getPort(ServerInterface.class);
         }
-        QName qname = new QName("http://server.battleshipgame.pitt.edu/", "ServerWrapperService");
-        Service service = Service.create(url, qname);
-        return service.getPort(ServerInterface.class);
+        catch (Exception e){
+            connected = false;
+            return null;
+        }
+
     }
     
     public ClientWrapper(String ipAddr) {
         ip = ipAddr;
         serverInterface = getServer();
     }
-    
+    @Override
+    public boolean checkConnection(){
+        return connected;
+    }
     @Override
     public int registerPlayer() {
         return serverInterface.registerPlayer();
