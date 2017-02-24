@@ -445,7 +445,7 @@ public class Client extends Application {
                         @Override
                         public void run() {
                             //statusLabel.setText("Its your turn!");
-                            updateShotBoard(shot, "Miss");
+                            updateShotBoard(move, "Miss");
                         }
                     });
                     } 
@@ -455,7 +455,7 @@ public class Client extends Application {
                         @Override
                         public void run() {
                             //statusLabel.setText("Its your turn!");
-                            updateShotBoard(shot, "Hit");
+                            updateShotBoard(move, "Hit");
                         }
                         });
                         Thread.sleep(5000);
@@ -466,7 +466,7 @@ public class Client extends Application {
                             @Override
                             public void run() {
                             //statusLabel.setText("Its your turn!");
-                                updateShotBoard(shot, "Hit");
+                                updateShotBoard(move, "Hit");
                             }
                             });
                         }
@@ -740,7 +740,8 @@ public class Client extends Application {
         }
 
     }
-    public void updateShotBoard(String c, String result){
+    public void updateShotBoard(Coordinate s, String result){
+        String c = s.toString();
         System.out.println(c.length());
         
         String num = c.substring(2,c.length());
