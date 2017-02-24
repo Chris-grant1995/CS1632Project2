@@ -14,6 +14,8 @@ import edu.pitt.battleshipgame.common.board.Coordinate;
 import javafx.concurrent.Task;
 import java.lang.Thread;
 
+import java.net.UnknownHostException;
+
 //Service Implementation
 @WebService(endpointInterface = "edu.pitt.battleshipgame.common.ServerInterface")
 /**
@@ -22,6 +24,7 @@ import java.lang.Thread;
 public class ServerWrapper implements ServerInterface {
     // We have a pseudo singleton around the Server object.
     private static GameTracker tracker = null;
+
 
     public ServerWrapper() throws UnknownHostException, InterruptedException {
         tracker = getInstance();
@@ -41,6 +44,7 @@ public class ServerWrapper implements ServerInterface {
         */
     }
     
+
     public static GameTracker getInstance() throws UnknownHostException, InterruptedException {
         if(tracker == null) {
             tracker = new GameTracker();
