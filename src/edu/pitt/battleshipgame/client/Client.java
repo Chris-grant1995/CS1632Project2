@@ -386,7 +386,7 @@ public class Client extends Application {
                         }
                     });
                     while(shot.equals("None")){
-                        Thread.sleep(10);
+                        Thread.sleep(1000);
                     }
 
 
@@ -454,7 +454,11 @@ public class Client extends Application {
         Thread gameloop = new Thread(task);
         gameloop.setDaemon(true);
         gameloop.start();
+
+
         timerLabel.setVisible(true);
+
+
         Task<Void> timeout = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -468,24 +472,28 @@ public class Client extends Application {
                         sendMessageToOtherPlayer("Opponent Lost Game due to timeout");
                     }
                 }
-                //TODO Add the same timeout for moved (30 seconds)
+                updateMessage("Finished Placing Ships");
                 count = 30;
                 while(true){
                     while(!moved){
                         Thread.sleep(1000);
                         count--;
                         updateMessage("Time to Fire: " + count);
-                        if(count == 0){
+                        while(count == 0){
                             sendMessageToOtherPlayer("Opponent Lost Game due to timeout");
+
                         }
                     }
+                    //System.out.println("Waiting for other player Timer Thread");
                     count = 30;
+                    updateMessage("Waiting for other player");
                     if(1!=1){
+                        System.out.println("Breaking (shouldn't happen)");
                         break;
                     }
                 }
-
-
+                System.out.println("We shouldn't be here");
+                updateMessage("We shouldn't be here");
                 return null;
             }
         };
@@ -784,7 +792,13 @@ public class Client extends Application {
                 b.setText("Miss");
             }
             else if(b.getText().contains(shot)){
-                b.setText("Hit");
+                if(b.getText().contains("10") && !shot.contains("10")){
+                    System.out.println("Coord 10 vs Coord 1 Bug");
+                }
+                else{
+                    b.setText("Hit");
+                }
+
             }
             counter++;
             if(counter == 100)
