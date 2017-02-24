@@ -321,9 +321,16 @@ public class Client extends Application {
                         }
                         Coordinate end = new Coordinate(place);
                         place = "None";
-                        ShipFactory.newShipFromType(type, start, end,board);
-
-
+                        
+                        // check if ship is "backwards" - if so, invert what we consider start and end for Ship constructor
+                        if ((start.getRow() == end.getRow() && start.getCol() > end.getCol()) || (start.getCol() == end.getCol() && start.getRow() > end.getRow()))
+                        {
+                             ShipFactory.newShipFromType(type, end, start, board);
+                        }
+                        else
+                        {
+                             ShipFactory.newShipFromType(type, start, end, board);
+                        }
                     }
                 }
                 //Now that we are done placing ships, disable all buttons on the player's grid
