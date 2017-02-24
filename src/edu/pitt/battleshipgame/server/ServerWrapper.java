@@ -32,7 +32,7 @@ public class ServerWrapper implements ServerInterface {
     }
 
     /**
-     * @see Server.registerPlayer
+     * Server.registerPlayer
      * 
      * @return The id of the registered player.
      */
@@ -42,7 +42,7 @@ public class ServerWrapper implements ServerInterface {
     }
 
     /**
-     * @see Server.waitForPlayers
+     * Server.waitForPlayers
      * 
      * @param playerID The ID of the player that is waiting.
      */
@@ -66,9 +66,9 @@ public class ServerWrapper implements ServerInterface {
      * The Network version of @see Server.registerBoard. It will convert the
      * byte [] board to a Board object to be passed to the Server.
      * 
-     * @param playerID The ID of the player registering a board.
+     * playerID The ID of the player registering a board.
      * 
-     * @param board The serialized representation of the board the player wants
+     * board The serialized representation of the board the player wants
      *              to register.
      */
     @Override
