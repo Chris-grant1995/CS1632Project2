@@ -11,6 +11,8 @@ import edu.pitt.battleshipgame.common.GameTracker;
 import edu.pitt.battleshipgame.common.ServerInterface;
 import edu.pitt.battleshipgame.common.board.Coordinate;
 
+import java.net.UnknownHostException;
+
 //Service Implementation
 @WebService(endpointInterface = "edu.pitt.battleshipgame.common.ServerInterface")
 /**
@@ -20,11 +22,11 @@ public class ServerWrapper implements ServerInterface {
     // We have a pseudo singleton around the Server object.
     private static GameTracker tracker = null;
 
-    public ServerWrapper() {
+    public ServerWrapper() throws UnknownHostException {
         tracker = getInstance();
     }
     
-    public static GameTracker getInstance() {
+    public static GameTracker getInstance() throws UnknownHostException {
         if(tracker == null) {
             tracker = new GameTracker();
         }
