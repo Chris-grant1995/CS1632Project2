@@ -105,7 +105,7 @@ public class Client extends Application {
 
         //Wait for the other thread to calculate the length of the ship we are creating
         while(length == 0){
-            Thread.sleep(1000);
+            Thread.sleep(10);
 
         }
 
@@ -287,7 +287,7 @@ public class Client extends Application {
 
                         //Wait until the user had pressed a button
                         while(place.equals("None")){
-                            Thread.sleep(1000);
+                            Thread.sleep(10);
                         }
                         Coordinate start = new Coordinate(place);
                         //Gets abbreviation and length of the ship that we are placing.
@@ -297,7 +297,7 @@ public class Client extends Application {
                         //Wait until all buttons that cannot be legitimately pressed are disabled
                         while(length!=0){
                             System.out.println("Wait until all buttons that cannot be legitimately pressed are disabled");
-                            Thread.sleep(1000);
+                            Thread.sleep(10);
                         }
                         place = "None";
                         startPlacement = false;
@@ -307,7 +307,7 @@ public class Client extends Application {
                         //Wait until the user had pressed a button 
                         while(place.equals("None")){
                             System.out.println("Wait until the user had pressed a button end");
-                            Thread.sleep(1000);
+                            Thread.sleep(10);
                         }
 
                         //Gets abbreviation and length of the ship that we are placing.
@@ -317,7 +317,7 @@ public class Client extends Application {
                         //Wait until all buttons that can be legitimately pressed are enabled
                         while(length!=0){
                             System.out.println("Wait until all buttons that can be legitimately pressed are enabled");
-                            Thread.sleep(1000);
+                            Thread.sleep(10);
                         }
                         Coordinate end = new Coordinate(place);
                         place = "None";
@@ -375,7 +375,7 @@ public class Client extends Application {
                         }
                     });
                     while(shot.equals("None")){
-                        Thread.sleep(1000);
+                        Thread.sleep(10);
                     }
 
 
@@ -501,7 +501,7 @@ public class Client extends Application {
                         });
                         break;
                     }
-                    Thread.sleep(1000);
+                    Thread.sleep(10);
                 }
 
                 return null;
