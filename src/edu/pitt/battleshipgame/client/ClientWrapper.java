@@ -11,6 +11,9 @@ import edu.pitt.battleshipgame.common.board.*;
 import edu.pitt.battleshipgame.common.*;
 
 public class ClientWrapper implements GameInterface {
+    // flip this to turn debug print statements on
+    public static final boolean IS_DEBUG_MODE = false;
+    
     ServerInterface serverInterface = null;
     int myPlayerID;
     static String ip;
@@ -22,15 +25,25 @@ public class ClientWrapper implements GameInterface {
             //url = new URL("http://localhost:9999/battleship?wsdl");
             String urlString = "http://" + ip + ":9999/battleship?wsdl";
             url = new URL(urlString);
-            System.out.println("test2");
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println("test2");
+            }
             //url = new URL("http://192.168.0.19:9999/battleship?wsdl");
 
             QName qname = new QName("http://server.battleshipgame.pitt.edu/", "ServerWrapperService");
-            System.out.println("test3");
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println("test3");
+            }
 
             Service service = Service.create(url, qname);
             connected = true;
-            System.out.println("test4");
+            if (IS_DEBUG_MODE)
+            {
+                System.out.println("test4");
+            }
+            
             return service.getPort(ServerInterface.class);
         }
         catch (Exception e){
