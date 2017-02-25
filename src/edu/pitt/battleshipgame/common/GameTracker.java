@@ -15,7 +15,7 @@ public class GameTracker {
     private int registeredPlayers = 0;
     private ArrayList<Board> gameBoards;
     private GameState state = GameState.INIT;
-    private int playerTurn = 0;
+    private Integer playerTurn;
     public Coordinate lastShot;
     public boolean gameOver = false;
     public String[] messages = new String[2];
@@ -143,7 +143,16 @@ public class GameTracker {
     
     public void setBoards(ArrayList<Board> boards) {
         gameBoards = boards;
-        playerTurn = (playerTurn + 1) % registeredPlayers;
+        
+        // If this is the first turn, randomly generate who gets it
+        if (state == GameState.PLACING && playerTurn == null)
+        {
+             playerTurn = (Math.random() < 0.5 ? 0 : 1);
+        }
+        else
+        {
+             playerTurn = (playerTurn + 1) % registeredPlayers;
+        }
     }
 
     public void setBoard(Board board, int playerID){
