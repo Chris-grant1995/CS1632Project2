@@ -28,6 +28,9 @@ public class Coordinate implements Serializable {
     
     /**
      * A simple constructor that calls setCoordinates below.
+     *
+     * @param coord formatted as "col:row"
+     *
      */
     public Coordinate (String coord) throws IllegalArgumentException {
         setCoordinates(coord);
@@ -42,6 +45,9 @@ public class Coordinate implements Serializable {
      * This function will parse and set the coordinates for the board.
      * This allows any parsing errors to be detected on the client side
      * before it gets to the server.
+     *
+     * @param coord formatted as "col:row"
+     *
      */
     public void setCoordinates(String coord) throws IllegalArgumentException {
         /*if (coord.length() != 3) {
