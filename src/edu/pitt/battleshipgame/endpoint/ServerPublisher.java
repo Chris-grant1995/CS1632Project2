@@ -10,8 +10,14 @@ import java.net.UnknownHostException;
 
 //Endpoint publisher
 public class ServerPublisher {
+    // flip this to turn debug print statements on
+    public static final boolean IS_DEBUG_MODE = false;
+    
     public static void main(String [] args) throws UnknownHostException, InterruptedException {
-        System.out.println("Constructing Server Please Wait.");
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println("Constructing Server Please Wait.");
+        }
 
         /*Task<Void> test = new Task<Void>() {
             @Override
