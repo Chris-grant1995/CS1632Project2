@@ -68,8 +68,7 @@ public abstract class Ship implements Serializable {
     }
     
     /**
-     * Get the length of this ship instance.
-     * @return 
+     * @return the length of this ship instance
      */
     public abstract int getLength();
     
@@ -77,12 +76,12 @@ public abstract class Ship implements Serializable {
      * Get the maximum amount of ships of this type allowed. This function is
      * only here to "force" the base class to have a
      * public static final int MAX_ALLOWED.
-     * @return 
+     * @return the maximum amount of ships of this type allowed
      */
     public abstract int maxAllowed();
 
     /**
-     * Get the name of the Ship.
+     * @return the name of the Ship.
      */
     public abstract String getName();
     
