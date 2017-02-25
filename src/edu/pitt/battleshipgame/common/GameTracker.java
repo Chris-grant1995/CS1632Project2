@@ -11,6 +11,9 @@ import javafx.concurrent.Task;
 import java.lang.Thread;
 
 public class GameTracker {
+    // flip this to turn debug print statements on
+    public static final boolean IS_DEBUG_MODE = false;
+    
     public static final int MAX_PLAYERS = 2;
     private int registeredPlayers = 0;
     private ArrayList<Board> gameBoards;
@@ -27,7 +30,10 @@ public class GameTracker {
         // Exists to protect this object from direct instantiation
         lock = new Object();
         gameBoards = new ArrayList<Board>(MAX_PLAYERS);
-        System.out.println("Server constructed.");
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println("Server constructed.");
+        }
 
 
 
@@ -38,7 +44,10 @@ public class GameTracker {
             @Override
             protected Void call() throws Exception {
                 test = true;
-                System.out.println("Hello From 0");
+                if (IS_DEBUG_MODE)
+                {
+                    System.out.println("Hello From 0");
+                }
                 checkConnection(0);
                 return null;
             }
@@ -47,21 +56,33 @@ public class GameTracker {
         Thread player0 = new Thread(player0Connection);
         player0.setDaemon(true);
         player0.start();
-        System.out.println(player0.isAlive());
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(player0.isAlive());
+        }
 
         Task<Void> player1Connection = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                System.out.println("Hello from 1");
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Hello from 1");
+                }
                 checkConnection(1);
                 return null;
             }
         };
-        System.out.println(player0.isAlive());
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(player0.isAlive());
+        }
         Thread player1 = new Thread(player1Connection);
         player1.setDaemon(true);
         player1.start();
-        System.out.println(player0.isAlive());
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(player0.isAlive());
+        }
     }
     public int registerPlayer() {
         synchronized(lock) {
@@ -81,7 +102,11 @@ public class GameTracker {
         switch (state) {
             case INIT:
             {
-                System.out.println("Player " + playerID + " is waiting for other players");
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Player " + playerID + " is waiting for other players");
+                }
+                
                 while(registeredPlayers < MAX_PLAYERS) {
                     try {
                         Thread.sleep(100);
@@ -89,13 +114,22 @@ public class GameTracker {
                         System.err.println(e + " I can't sleep!");
                     }
                 }
-                System.out.println("Playing");
+                
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Playing");
+                }
+                
                 state = GameState.PLACING;
                 break;
             }
             case PLACING:
             {
-                System.out.println("Placing Wait");
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Placing Wait");
+                }
+                
                 int shipCount =0;
                 while(shipCount != 10){
                     for(Board board:gameBoards){
@@ -134,7 +168,11 @@ public class GameTracker {
             default:
                 break;
         }
-        System.out.println("Done Waiting!");
+        
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println("Done Waiting!");
+        }
     }
     
     public List<Board> getBoards() {
@@ -156,20 +194,31 @@ public class GameTracker {
     }
 
     public void setBoard(Board board, int playerID){
-        System.out.println("Player " + playerID + " board:");
-        System.out.println(board.getShipList());
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println("Player " + playerID + " board:");
+             System.out.println(board.getShipList());
+        }
         gameBoards.remove(playerID);
         gameBoards.add(playerID,board);
     }
     
     public boolean isGameOver() {
-        System.out.println("Checking if the game is over...");
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println("Checking if the game is over...");
+        }
+        
         if(gameOver){
             return true;
         }
+        
         for(Board board : gameBoards) {
             if(board.areAllShipsSunk()) {
-                System.out.println("Returning True");
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Returning True");
+                }
                 return true;
             }
         }
@@ -189,17 +238,28 @@ public class GameTracker {
     }
     public void checkConnection(int playerID) throws InterruptedException {
         while(counts[playerID] !=0){
-            System.out.println("Test");
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println("Test");
+            }
+            
             Thread.sleep(1000);
         }
         int count = 0;
         while(!gameOver){
             count++;
-            System.out.println(count + "" + playerID);
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println(count + "" + playerID);
+            }
+            
             if(count > counts[playerID] + 2){
-                System.out.println("Player "+ playerID + "DCed");
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Player "+ playerID + "DCed");
+                }
+                
                 sendMessage("Your opponent has disconnected", (playerID+1)%registeredPlayers);
-
             }
             Thread.sleep(1000);
         }
