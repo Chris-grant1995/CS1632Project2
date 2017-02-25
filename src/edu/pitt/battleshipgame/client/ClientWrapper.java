@@ -77,8 +77,7 @@ public class ClientWrapper implements GameInterface {
         return (Coordinate) Serializer.fromByteArray(serverInterface.getLastShot());
     }
     /**
-     * Client side wrapper around the 
-     * @return 
+     * Client side wrapper around the  
      */
     @Override
     public ArrayList<Board> getBoards() {
