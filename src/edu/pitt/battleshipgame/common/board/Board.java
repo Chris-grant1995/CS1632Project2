@@ -7,6 +7,9 @@ import java.io.Serializable;
 import edu.pitt.battleshipgame.common.ships.Ship;
 
 public class Board implements Serializable {
+    // flip this to turn debug print statements on
+    public static final boolean IS_DEBUG_MODE = false;
+    
     public static final int BOARD_DIM = 10;
     // We could track a Ship-Bool pair but it is just as easy to have
     // two arrays. The Ships array will keep track of the ships on the
@@ -80,13 +83,25 @@ public class Board implements Serializable {
     }
     
     public boolean areAllShipsSunk() {
-        System.out.println("ShipList Length: " + shipList.size());
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println("ShipList Length: " + shipList.size());
+        }
+        
         for (Ship s : shipList) {
-            System.out.println(s.getName());
-            System.out.println(s.getCoordinates());
-            System.out.println(s.isSunk());
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println(s.getName());
+                 System.out.println(s.getCoordinates());
+                 System.out.println(s.isSunk());
+            }
+            
             if (! s.isSunk()) {
-                System.out.println("Not All Ships are sunk");
+                if (IS_DEBUG_MODE)
+                {
+                    System.out.println("Not All Ships are sunk");
+                }
+                
                 return false;
             }
         }
