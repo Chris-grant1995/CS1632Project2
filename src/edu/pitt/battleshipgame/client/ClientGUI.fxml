@@ -4,7 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pitt.battleshipgame.client.Client">
+<Pane fx:id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.pitt.battleshipgame.client.Client">
    <children>
       <GridPane fx:id="oponentGrid" gridLinesVisible="true" layoutX="42.0" layoutY="14.0" prefHeight="325.0" prefWidth="717.0">
         <columnConstraints>
@@ -134,7 +134,7 @@
             <Button mnemonicParsing="false" onAction="#fire" text="I9" GridPane.columnIndex="8" GridPane.rowIndex="8" />
          </children>
       </GridPane>
-      <Label layoutX="42.0" layoutY="367.0" prefHeight="17.0" prefWidth="241.0" text="Your Board ▼ Opponent's Board ▲" />
+      <Label fx:id="boardLabel" layoutX="42.0" layoutY="367.0" prefHeight="17.0" prefWidth="241.0" text="Your Board ▼ Opponent's Board ▲" />
       <Label fx:id="statusLabel" layoutX="313.0" layoutY="367.0" prefHeight="17.0" prefWidth="443.0" text="statusLabel" />
       <Button layoutX="576.0" layoutY="753.0" mnemonicParsing="false" onAction="#startGame" prefHeight="27.0" prefWidth="136.0" text="Click to Begin" />
       <GridPane fx:id="playerGrid" gridLinesVisible="true" layoutX="42.0" layoutY="409.0" prefHeight="325.0" prefWidth="717.0">
