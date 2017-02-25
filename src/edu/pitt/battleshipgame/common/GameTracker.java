@@ -124,7 +124,7 @@ public class GameTracker {
             {
                 while(playerTurn != playerID) {
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         System.err.println(e + " I can't sleep!");
                     }
