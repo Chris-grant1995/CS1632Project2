@@ -30,6 +30,9 @@ import javafx.concurrent.Task;
 
 
 public class Client extends Application {
+    // flip this to turn debug print statements on
+    public static final boolean IS_DEBUG_MODE = false;
+    
     public static GameInterface gi;
     public static int myPlayerID;
     public static ArrayList<Board> gameBoards;
@@ -70,7 +73,12 @@ public class Client extends Application {
     @FXML
     void initialize() {
         assert a1 != null : "fx:id=\"a1\" was not injected: check your FXML file 'Test.fxml'.";
-        System.out.println("In initialize()");
+        
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println("In initialize()");
+        }
+        
         statusLabel.setText("Enter the Server IP and then press the Button Below to Begin");
         timerLabel.setVisible(false);
 
@@ -81,7 +89,11 @@ public class Client extends Application {
         Task<Void> test = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                System.out.println("Testing");
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Testing");
+                }
+                
                 return null;
             }
         };
@@ -93,7 +105,11 @@ public class Client extends Application {
 
     @FXML
     void setIP(ActionEvent event) {
-        System.out.println(textfield.getText());
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(textfield.getText());
+        }
+        
         serverIP=textfield.getText();
     }
     @FXML
@@ -192,7 +208,10 @@ public class Client extends Application {
 
         serverIP = textfield.getText();
 
-        System.out.println(serverIP);
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(serverIP);
+        }
 
        // System.out.println("Testing2");
 
@@ -349,7 +368,11 @@ public class Client extends Application {
 
                         //Wait until all buttons that cannot be legitimately pressed are disabled
                         while(length!=0){
-                            System.out.println("Wait until all buttons that cannot be legitimately pressed are disabled");
+                            if (IS_DEBUG_MODE)
+                            {
+                                 System.out.println("Wait until all buttons that cannot be legitimately pressed are disabled");
+                            }
+                            
                             Thread.sleep(10);
                         }
                         place = "None";
@@ -359,7 +382,11 @@ public class Client extends Application {
 
                         //Wait until the user had pressed a button 
                         while(place.equals("None")){
-                            System.out.println("Wait until the user had pressed a button end");
+                            if (IS_DEBUG_MODE)
+                            {
+                                 System.out.println("Wait until the user had pressed a button end");
+                            }
+                            
                             Thread.sleep(10);
                         }
 
@@ -369,7 +396,11 @@ public class Client extends Application {
 
                         //Wait until all buttons that can be legitimately pressed are enabled
                         while(length!=0){
-                            System.out.println("Wait until all buttons that can be legitimately pressed are enabled");
+                            if (IS_DEBUG_MODE)
+                            {
+                                 System.out.println("Wait until all buttons that can be legitimately pressed are enabled");
+                            }
+                            
                             Thread.sleep(10);
                         }
                         Coordinate end = new Coordinate(place);
@@ -390,7 +421,10 @@ public class Client extends Application {
                 updateMessage("Done Placing Ships");
                 donePlacingShips = true;
                 disablePlayerGrid();
-                printBoardInfo(board);
+                if (IS_DEBUG_MODE)
+                {
+                     printBoardInfo(board);
+                }
                 
                 //gi.setBoards(gameBoards);
                 gi.setBoard(board, myPlayerID);
@@ -408,12 +442,22 @@ public class Client extends Application {
                         updateMessage("You Lost!");
                         break;
                     }
-                    System.out.println("Your Turn!");
+                    
+                    if (IS_DEBUG_MODE)
+                    {
+                         System.out.println("Your Turn!");
+                    }
+                    
                     moved = false;
                     updateMessage("Its your turn!");
                     gameBoards = gi.getBoards();
                     Coordinate lastShot = gi.getLastShot();
-                    System.out.println(lastShot);
+                    
+                    if (IS_DEBUG_MODE)
+                    {
+                         System.out.println(lastShot);
+                    }
+                    
                     if(lastShot != null){
                         Platform.runLater(new Runnable() {
                             @Override
@@ -424,7 +468,10 @@ public class Client extends Application {
 
                     }
                     else{
-                        System.out.println("No Shots Fired, this is the first move");
+                        if (IS_DEBUG_MODE)
+                        {
+                             System.out.println("No Shots Fired, this is the first move");
+                        }
                     }
 
                     Platform.runLater(new Runnable() {
@@ -442,7 +489,11 @@ public class Client extends Application {
                     moved = true;
 
                     //System.out.println(gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).toString(true));
-                    System.out.println(shot);
+                    if (IS_DEBUG_MODE)
+                    {
+                         System.out.println(shot);
+                    }
+                    
                     Coordinate move = new Coordinate(shot);
                     gi.sendMove(move);
                     Ship ship = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).makeMove(move);
@@ -479,7 +530,12 @@ public class Client extends Application {
                         }
                     gi.setBoards(gameBoards);
                     shot = "None";
-                    System.out.println("Loop Done");
+                    
+                    if (IS_DEBUG_MODE)
+                    {
+                         System.out.println("Loop Done");
+                    }
+                    
                     if(gi.isGameOver()){
                         updateMessage("You Won!");
                     }
@@ -537,11 +593,19 @@ public class Client extends Application {
                     count = 30;
                     updateMessage("Waiting for other player");
                     if(1!=1){
-                        System.out.println("Breaking (shouldn't happen)");
+                        if (IS_DEBUG_MODE)
+                        {
+                             System.out.println("Breaking (shouldn't happen)");
+                        }
+                        
                         break;
                     }
                 }
-                System.out.println("We shouldn't be here");
+                
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("We shouldn't be here");
+                }
                 updateMessage("We shouldn't be here");
                 return null;
             }
@@ -558,7 +622,11 @@ public class Client extends Application {
 
         //Add ship abbreviation to list
         shipAbbr.add(abbr);
-        System.out.println(startPlacement);
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(startPlacement);
+        }
+        
         //If we are placing the "head" of the ship
         if(startPlacement){
             ArrayList<String> options = new ArrayList<>();
@@ -607,7 +675,11 @@ public class Client extends Application {
                 //Lists all buttons that would be disabled if the user were to select that specific option
                 ArrayList<String> path = new ArrayList<>();
                 if(letter1 == letter2){
-                    System.out.println("Same Letters");
+                    if (IS_DEBUG_MODE)
+                    {
+                         System.out.println("Same Letters");
+                    }
+                    
                     for(int i = num1; i<num2; i++){
                         newS = letter1 + "" + i;
                         path.add(newS);
@@ -627,7 +699,12 @@ public class Client extends Application {
                         path.add(newS);
                     }
                 }
-                System.out.println("Removing Intersections");
+                
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Removing Intersections");
+                }
+                
                 //Searches for the buttons in path, and if it finds that the button isn't occupied, it removes it.
                 ObservableList<Node> buttons = playerGrid.getChildren();
                 int counter2=0;
@@ -642,14 +719,23 @@ public class Client extends Application {
                 }
                 //When the above for loop finishes, path will contain the coordinates of any occupied button,
                 // so if path isn't empty, the path would intersect with another ship, so we remove that option
-                System.out.println("Checking Intersections");
+                if (IS_DEBUG_MODE)
+                {
+                     System.out.println("Checking Intersections");
+                }
+                
                 if(path.size() != 0){
                     options.remove(option);
                 }
 
 
             }
-            System.out.println("Disabling Buttons");
+            
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println("Disabling Buttons");
+            }
+            
             //Disable any button that isn't contained in the good options list.
             ObservableList<Node> test = playerGrid.getChildren();
             int counter = 0;
@@ -690,7 +776,12 @@ public class Client extends Application {
             greyedOut.add(newS);
             newS = letter2 + "" + num2;
             greyedOut.add(newS);
-            System.out.println("Building Path");
+            
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println("Building Path");
+            }
+            
             //Add all the buttons between button1 and button2 to be greyed out
             if(letter1 == letter2){
                 for(int i = num1; i<num2; i++){
@@ -714,7 +805,11 @@ public class Client extends Application {
             }
 
             //Disable buttons for the path, sets abbreviations, enables buttons that should be enabled afterwards
-            System.out.println("Enabling Buttons");
+            if (IS_DEBUG_MODE)
+            {
+                 System.out.println("Enabling Buttons");
+            }
+            
             ObservableList<Node> test = playerGrid.getChildren();
             int counter = 0;
             for(Node t:test){
@@ -749,13 +844,24 @@ public class Client extends Application {
     }
     public void updateShotBoard(Coordinate s, String result){
         String c = s.toString();
-        System.out.println(c.length());
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(c.length());
+        }
         
         String num = c.substring(2,c.length());
-        System.out.println(num);
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(num);
+        }
+        
         String letter = c.substring(0,1);
         String newCoord = letter+num;
-        System.out.println(newCoord);
+        if (IS_DEBUG_MODE)
+        {
+             System.out.println(newCoord);
+        }
+        
         ObservableList<Node> test = oponentGrid.getChildren();
         int counter = 0;
         for(Node t:test){
@@ -773,6 +879,9 @@ public class Client extends Application {
                 break;
         }
     }
+    
+    
+    //-----------------------------------------------------------------------------------------------------
     public static void gameLoop() {
         System.out.println("The game is starting!");
         do {
