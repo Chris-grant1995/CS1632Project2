@@ -400,7 +400,7 @@ public class Client extends Application {
                 
                 //GUIGameLoop();
                 while(!gi.isGameOver()){
-
+                    Thread.sleep(1000);
                     updateMessage("Waiting for your turn");
 
                     gi.wait(myPlayerID);
