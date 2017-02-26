@@ -77,6 +77,7 @@ public class Client extends Application {
     @FXML
     private Button quitButton;
     boolean stopTimer = false;
+    public Task<Integer> task;
 
 
     @FXML
@@ -337,6 +338,15 @@ public class Client extends Application {
                             }
                             else{
                                 //TODO Tell player about sunk ship
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        statusLabel.textProperty().unbind();
+                                        statusLabel.setText(message);
+                                        statusLabel.textProperty().bind(task.messageProperty());
+                                    }
+                                });
+
                             }
 
                         }
@@ -392,7 +402,7 @@ public class Client extends Application {
     public void GUIPlaceShips(Board board){
 
         //This is the method that is run when we create a new thread below.
-        Task<Integer> task = new Task<Integer>() {
+        task = new Task<Integer>() {
             @Override
             protected Integer call() throws Exception {
                 for (Ship.ShipType type : Ship.ShipType.values()) {
@@ -490,12 +500,22 @@ public class Client extends Application {
                     }
 
                     if(lastShot != null){
+                        Board board = gameBoards.get(myPlayerID);
+                        String sunk = checkIfSunk(lastShot, board);
+                        if(sunk.contains("sunk")){
+                            updateMessage(sunk);
+                        }
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
                                 updateHitsOnPlayerBoard(lastShot);
+
+
                             }
                         });
+                        if(sunk.contains("sunk")){
+                            Thread.sleep(5000);
+                        }
 
                     }
                     else{
@@ -504,7 +524,7 @@ public class Client extends Application {
                             System.out.println("No Shots Fired, this is the first move");
                         }
                     }
-                    
+
                     if(gi.isGameOver()){
                         updateMessage("You Lost!");
                         stopTimer = true;
@@ -555,6 +575,7 @@ public class Client extends Application {
                     } 
                     else if (ship.isSunk()) {
                         updateMessage("You sunk "+ ship.getName());
+                        sendMessageToOtherPlayer("Your " + ship.getName()+ " was sunk" );
                         Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -977,6 +998,24 @@ public class Client extends Application {
         }
     }
 
+    public String checkIfSunk(Coordinate c, Board b){
+        List<Ship> ships = b.getShipList();
+        for(Ship ship: ships){
+            for(Coordinate coord: ship.getCoordinates()){
+                if(c.toString().equals(coord.toString())){
+                    //Found the ship
+                    if(ship.isSunk()){
+                        return "Your " + ship.getName() + " was sunk";
+                    }
+                    else{
+                        return " ";
+                    }
+                }
+            }
+        }
+        return " ";
+    }
+
     @FXML
     void quitGame(ActionEvent event) {
         if(!stopTimer){
@@ -987,11 +1026,8 @@ public class Client extends Application {
 
     @FXML
     void surrender(ActionEvent event) {
-        if(IS_DEBUG_MODE){
-            System.out.println("Testing Surrender");
-        }
-        sendMessageToOtherPlayer("Opponent Surrendered");
         stopTimer = true;
+        sendMessageToOtherPlayer("Opponent Surrendered");
 
     }
     public void sendMessageToOtherPlayer(String message){
