@@ -72,6 +72,14 @@ public class Client extends Application {
     private Label boardLabel;
 
     @FXML
+    private Button surrenderButton;
+
+    @FXML
+    private Button quitButton;
+    boolean stopTimer = false;
+
+
+    @FXML
     void initialize() {
         assert a1 != null : "fx:id=\"a1\" was not injected: check your FXML file 'Test.fxml'.";
         
@@ -116,6 +124,9 @@ public class Client extends Application {
         
         statusLabel.setText("Enter the Server IP and then press the Button Below to Begin");
         timerLabel.setVisible(false);
+
+        surrenderButton.setVisible(false);
+        quitButton.setVisible(false);
 
         disableOponentGrid();
         disablePlayerGrid();
@@ -260,6 +271,9 @@ public class Client extends Application {
             Button b = (Button)event.getSource();
             b.setVisible(false);
             textfield.setVisible(false);
+
+            quitButton.setVisible(true);
+            surrenderButton.setVisible(true);
             statusLabel.setText("Waiting For another player to connect, You are player" + myPlayerID);
 
             Task<Void> gameTask = new Task<Void>() {
@@ -305,18 +319,26 @@ public class Client extends Application {
                     while(true){
                         String message = gi.checkMessages(myPlayerID);
                         if(message != null) {
-                            //TODO Update Status Label
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //statusLabel.setText("Its your turn!");
-                                    statusLabel.textProperty().unbind();
-                                    statusLabel.setText(message);
-                                    disableOponentGrid();
-                                    disablePlayerGrid();
-                                }
-                            });
-                            break;
+
+                            if(!message.contains("sunk")){
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //statusLabel.setText("Its your turn!");
+                                        statusLabel.textProperty().unbind();
+                                        statusLabel.setText(message);
+                                        disableOponentGrid();
+                                        disablePlayerGrid();
+                                        stopTimer = true;
+                                        surrenderButton.setDisable(true);
+                                    }
+                                });
+                                break;
+                            }
+                            else{
+                                //TODO Tell player about sunk ship
+                            }
+
                         }
                         Thread.sleep(10);
                     }
@@ -365,21 +387,6 @@ public class Client extends Application {
     }
     public static void main(String [] args) {
         launch(args);
-        /*
-        gi = new ClientWrapper();
-        myPlayerID = gi.registerPlayer();
-        System.out.println("You have registered as Player " + myPlayerID);
-        System.out.println("Please wait for other players to join");
-        gi.wait(myPlayerID);
-        System.out.println("Both Players have joined, starting the game.");
-        gameBoards = gi.getBoards();
-        placeShips(gameBoards.get(myPlayerID));
-        System.out.println("Your board:");
-        System.out.println(gameBoards.get(myPlayerID).toString(true));
-        gi.setBoards(gameBoards);
-        gameLoop();
-
-        */
     }
 
     public void GUIPlaceShips(Board board){
@@ -475,6 +482,7 @@ public class Client extends Application {
                     gi.wait(myPlayerID);
                     if(gi.isGameOver()){
                         updateMessage("You Lost!");
+                        stopTimer = true;
                         break;
                     }
                     
@@ -573,6 +581,7 @@ public class Client extends Application {
                     
                     if(gi.isGameOver()){
                         updateMessage("You Won!");
+                        stopTimer = true;
                     }
 
                     }
@@ -604,6 +613,9 @@ public class Client extends Application {
             protected Void call() throws Exception {
                 int count = 120;
                 while(!donePlacingShips){
+                    if(stopTimer){
+                        break;
+                    }
                     Thread.sleep(1000);
                     count--;
                     updateMessage("Time to Finish Placing: " + count);
@@ -611,10 +623,15 @@ public class Client extends Application {
                     if(count == 0){
                         sendMessageToOtherPlayer("Opponent Lost Game due to timeout");
                     }
+
                 }
                 updateMessage("Finished Placing Ships");
                 count = 30;
                 while(true){
+                    if(stopTimer){
+                        updateMessage("Game Over");
+                        break;
+                    }
                     while(!moved){
                         Thread.sleep(1000);
                         count--;
@@ -627,6 +644,7 @@ public class Client extends Application {
                     //System.out.println("Waiting for other player Timer Thread");
                     count = 30;
                     updateMessage("Waiting for other player");
+
                     if(1!=1){
                         if (IS_DEBUG_MODE)
                         {
@@ -637,11 +655,7 @@ public class Client extends Application {
                     }
                 }
                 
-                if (IS_DEBUG_MODE)
-                {
-                     System.out.println("We shouldn't be here");
-                }
-                updateMessage("We shouldn't be here");
+
                 return null;
             }
         };
@@ -924,30 +938,7 @@ public class Client extends Application {
                 break;
         }
     }
-    
-    public static void gameLoop() {
-        System.out.println("The game is starting!");
-        do {
-            // Wait for our turn
-            gi.wait(myPlayerID);
-            // Get the updated boards
-            gameBoards = gi.getBoards();
-            System.out.println("Where would you like to place your move?");
-            Coordinate move = new Coordinate(scan.nextLine());
-            Ship ship = gameBoards.get((myPlayerID + 1) % GameTracker.MAX_PLAYERS).makeMove(move);
-            if(ship == null) {
-                System.out.println("Miss");
-            } else if (ship.isSunk()) {
-                System.out.println("You sunk " + ship.getName());
-            } else {
-                System.out.println("Hit");
-            }
-            // Send the updated boards.
-            gi.setBoards(gameBoards);
-            
-        } while(!gi.isGameOver());
-        System.out.println("The Game is Over!");
-    }
+
     
     public void printBoardInfo(Board b){
         List<Ship> ships = b.getShipList();
@@ -981,6 +972,24 @@ public class Client extends Application {
             if(counter == 100)
                 break;
         }
+    }
+
+    @FXML
+    void quitGame(ActionEvent event) {
+        if(!stopTimer){
+            surrender(event);
+        }
+        System.exit(0);
+    }
+
+    @FXML
+    void surrender(ActionEvent event) {
+        if(IS_DEBUG_MODE){
+            System.out.println("Testing Surrender");
+        }
+        sendMessageToOtherPlayer("Opponent Surrendered");
+        stopTimer = true;
+
     }
     public void sendMessageToOtherPlayer(String message){
         gi.sendMessageToOtherPlayer(message, myPlayerID);
