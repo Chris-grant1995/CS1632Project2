@@ -480,6 +480,31 @@ public class Client extends Application {
                     updateMessage("Waiting for your turn");
 
                     gi.wait(myPlayerID);
+
+                    gameBoards = gi.getBoards();
+                    Coordinate lastShot = gi.getLastShot();
+
+                    if (IS_DEBUG_MODE)
+                    {
+                        System.out.println(lastShot);
+                    }
+
+                    if(lastShot != null){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHitsOnPlayerBoard(lastShot);
+                            }
+                        });
+
+                    }
+                    else{
+                        if (IS_DEBUG_MODE)
+                        {
+                            System.out.println("No Shots Fired, this is the first move");
+                        }
+                    }
+                    
                     if(gi.isGameOver()){
                         updateMessage("You Lost!");
                         stopTimer = true;
@@ -493,29 +518,7 @@ public class Client extends Application {
                     
                     moved = false;
                     updateMessage("Its your turn!");
-                    gameBoards = gi.getBoards();
-                    Coordinate lastShot = gi.getLastShot();
-                    
-                    if (IS_DEBUG_MODE)
-                    {
-                         System.out.println(lastShot);
-                    }
-                    
-                    if(lastShot != null){
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateHitsOnPlayerBoard(lastShot);
-                            }
-                        });
 
-                    }
-                    else{
-                        if (IS_DEBUG_MODE)
-                        {
-                             System.out.println("No Shots Fired, this is the first move");
-                        }
-                    }
 
                     Platform.runLater(new Runnable() {
                         @Override
