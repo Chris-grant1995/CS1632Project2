@@ -229,6 +229,10 @@ public class GameTracker {
             gameOver = true;
             messages[playerID] = "You lose the game due to timeout";
         }
+        else if(message.equals("Opponent Surrendered")){
+            gameOver = true;
+            messages[playerID] = "You Surrendered";
+        }
 
         messages[(playerID+1)%registeredPlayers] = message;
     }
