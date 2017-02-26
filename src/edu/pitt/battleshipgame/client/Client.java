@@ -20,6 +20,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -50,14 +52,12 @@ public class Client extends Application {
     public String serverIP;
     @FXML
     private ResourceBundle resources;
-
     @FXML
     private URL location;
-
     @FXML
     private TextField textfield;
-
-
+    @FXML
+    private Pane background;
     @FXML
     private GridPane oponentGrid;
     @FXML
@@ -66,9 +66,10 @@ public class Client extends Application {
     private GridPane playerGrid;
     @FXML
     private Label statusLabel;
-
     @FXML
     private Label timerLabel;
+    @FXML
+    private Label boardLabel;
 
     @FXML
     void initialize() {
@@ -77,6 +78,40 @@ public class Client extends Application {
         if (IS_DEBUG_MODE)
         {
              System.out.println("In initialize()");
+        }
+        
+        // add Battleship styling to UI
+        background.setStyle("-fx-background-color: #1167DC;");
+        oponentGrid.setStyle("-fx-background-color: #86CBC4;");
+        playerGrid.setStyle("-fx-background-color: #86CBC4;");
+        statusLabel.setTextFill(Color.WHITE);
+        timerLabel.setTextFill(Color.WHITE);
+        boardLabel.setTextFill(Color.WHITE);
+        ObservableList<Node> og = oponentGrid.getChildren();
+        int i = 0;
+        for ( Node n : og )
+        {
+            Button b = (Button)n;
+            b.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+            i++;
+            if (i == 100)
+            {
+                break;
+            }
+        }
+        ObservableList<Node> pg = playerGrid.getChildren();
+        i = 0;
+        for ( Node n : pg )
+        {
+            Button b = (Button)n;
+            b.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+            i++;
+            if (i == 100)
+            {
+                break;
+            }
         }
         
         statusLabel.setText("Enter the Server IP and then press the Button Below to Begin");
@@ -820,6 +855,7 @@ public class Client extends Application {
                     placedCoords.add(b.getText());
                     if(greyedOut.contains(b.getText())){
                         b.setText(b.getText() + abbr);
+                        b.setStyle("-fx-background-color: #696969;");
                         shipAbbr.add(b.getText());
                     }
 
@@ -870,6 +906,15 @@ public class Client extends Application {
             if(b.getText().equals(newCoord)){
                 b.setDisable(true);
                 b.setText(result);
+                
+                if (b.getText().equals("Hit"))
+                {
+                     b.setStyle("-fx-base: #FF0000;");
+                }
+                else if (b.getText().equals("Miss"))
+                {
+                     b.setStyle("-fx-base: #FFFFFF;");
+                }
             }
             else{
                 b.setDisable(true);
@@ -880,8 +925,6 @@ public class Client extends Application {
         }
     }
     
-    
-    //-----------------------------------------------------------------------------------------------------
     public static void gameLoop() {
         System.out.println("The game is starting!");
         do {
@@ -905,12 +948,14 @@ public class Client extends Application {
         } while(!gi.isGameOver());
         System.out.println("The Game is Over!");
     }
+    
     public void printBoardInfo(Board b){
         List<Ship> ships = b.getShipList();
         for(Ship ship: ships){
             System.out.println(ship.getName() + ": " + ship.getCoordinates());
         }
     }
+    
     public void updateHitsOnPlayerBoard(Coordinate c){
         String text = c.toString();
         String shot = text.substring(0,1) + text.substring(2,text.length());
@@ -920,6 +965,7 @@ public class Client extends Application {
             Button b = (Button)t;
             if(b.getText().equals(shot)){
                 b.setText("Miss");
+                b.setStyle("-fx-base: #FFFFFF;");
             }
             else if(b.getText().contains(shot)){
                 if(b.getText().contains("10") && !shot.contains("10")){
@@ -927,6 +973,7 @@ public class Client extends Application {
                 }
                 else{
                     b.setText("Hit");
+                    b.setStyle("-fx-base: #FF0000;");
                 }
 
             }
