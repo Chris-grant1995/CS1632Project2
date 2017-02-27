@@ -984,7 +984,10 @@ public class Client extends Application {
             }
             else if(b.getText().contains(shot)){
                 if(b.getText().contains("10") && !shot.contains("10")){
-                    System.out.println("Coord 10 vs Coord 1 Bug");
+                    if (IS_DEBUG_MODE)
+                    {
+                        System.out.println("Coord 10 vs Coord 1 Bug");
+                    }
                 }
                 else{
                     b.setText("Hit");
