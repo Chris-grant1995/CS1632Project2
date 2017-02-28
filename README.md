@@ -37,3 +37,12 @@ In order to run the project on the command line:
 2) Run "java -jar dist/Server/BattleshipServer.jar" in one shell.
 3) Run "java -jar dist/Client/BattleshipClient.jar" in the other shells.
 
+###OR
+
+In order to build
+1) ./compile.sh
+
+In order to run the project on the command line:
+1) For the server: ./runServer.sh
+2) For the client: ./runClient.sh
+
