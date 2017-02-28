@@ -19,8 +19,8 @@ TC-5.4: Passed
 TC-5.5: Passed
 TC-5.6: Passed
 TC-5.7: Passed
-TC-Non1a: passed
-TC-Non1b: Can't Test
+TC-Non1a: Passed
+TC-Non1b: Passed
 TC-Non1c: Passed
 TC-Non3a: Passed
 TC-Non3b: Passed

@@ -22,7 +22,7 @@ public class GameTracker {
     public Coordinate lastShot;
     public boolean gameOver = false;
     public String[] messages = new String[2];
-    public int[] counts = {0,0};
+    public long[] counts = {0,0};
     Object lock;
     public boolean test = false;
     
@@ -238,6 +238,11 @@ public class GameTracker {
     }
     public String checkMessage(int playerID){
         counts[playerID]++;
+
+        if(counts[(playerID+1) % 2] + 3 < counts[playerID]){
+            return "The other player has disconnected";
+        }
+
         return messages[playerID];
     }
     public void checkConnection(int playerID) throws InterruptedException {

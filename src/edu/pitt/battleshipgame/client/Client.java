@@ -292,6 +292,41 @@ public class Client extends Application {
                             gameBoards = gi.getBoards();
                             Board board = gameBoards.get(myPlayerID);
                             enablePlayerGrid();
+
+                            Task<Void> messageChecker = new Task<Void>() {
+                                @Override
+                                protected Void call() throws Exception {
+
+                                    while(true){
+                                        String message = gi.checkMessages(myPlayerID);
+                                        if(message != null) {
+
+                                            Platform.runLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    //statusLabel.setText("Its your turn!");
+                                                    statusLabel.textProperty().unbind();
+                                                    statusLabel.setText(message);
+                                                    disableOponentGrid();
+                                                    disablePlayerGrid();
+                                                    stopTimer = true;
+                                                    surrenderButton.setDisable(true);
+                                                }
+                                            });
+                                            break;
+
+                                        }
+                                        Thread.sleep(10);
+                                    }
+
+                                    return null;
+                                }
+                            };
+
+                            Thread messageCheck = new Thread(messageChecker);
+                            messageCheck.setDaemon(true);
+                            messageCheck.start();
+
                             //statusLabel.setText("Please enter a start coordinate to place your Battleship");
                             GUIPlaceShips(board);
                         }
@@ -313,53 +348,7 @@ public class Client extends Application {
             gameThread.start();
 
 
-            Task<Void> messageChecker = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
 
-                    while(true){
-                        String message = gi.checkMessages(myPlayerID);
-                        if(message != null) {
-
-                            if(!message.contains("sunk")){
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        //statusLabel.setText("Its your turn!");
-                                        statusLabel.textProperty().unbind();
-                                        statusLabel.setText(message);
-                                        disableOponentGrid();
-                                        disablePlayerGrid();
-                                        stopTimer = true;
-                                        surrenderButton.setDisable(true);
-                                    }
-                                });
-                                break;
-                            }
-                            else{
-                                //TODO Tell player about sunk ship
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        statusLabel.textProperty().unbind();
-                                        statusLabel.setText(message);
-                                        statusLabel.textProperty().bind(task.messageProperty());
-                                    }
-                                });
-
-                            }
-
-                        }
-                        Thread.sleep(10);
-                    }
-
-                    return null;
-                }
-            };
-
-            Thread messageCheck = new Thread(messageChecker);
-            messageCheck.setDaemon(true);
-            messageCheck.start();
         }
         else{
             statusLabel.setText("Unable to Connect to Server. Check IP and Try again");
