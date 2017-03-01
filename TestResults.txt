@@ -11,7 +11,7 @@ TC-4.1: Passed
 TC-4.2: Passed
 TC-4.3: Passed
 TC-4.4: Passed
-TC-4.5: Failed
+TC-4.5: Passed
 TC-5.1: Passed
 TC-5.2: Passed
 TC-5.3: Passed
